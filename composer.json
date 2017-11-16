@@ -1,0 +1,26 @@
+{
+    "name": "corex/config",
+    "type": "library",
+    "description": "Config Framework",
+    "license": "MIT",
+    "keywords": [
+        "config",
+        "dotenv"
+    ],
+    "authors": [
+        {
+            "name": "CoRex",
+            "email": "dev@corex.dk"
+        }
+    ],
+    "require": {
+        "illuminate/config": "^5.5",
+        "vlucas/phpdotenv": "^2.4",
+        "symfony/finder": "^3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "CoRex\\Config\\": "src/"
+        }
+    }
+}
