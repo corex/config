@@ -10,7 +10,7 @@ Configuration files live in a directory named "config" in the root directory of 
 
 Multiple locations are supported through apps (repositories).
 
-Support for more multiple levels (sub-directories) of config-files.
+Support for multiple levels (sub-directories) of config-files.
 
 ```php
 // Register path for myApp.
