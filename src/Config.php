@@ -14,6 +14,7 @@ class Config
      * @param string $key
      * @param string $app Default null which means default app '*'.
      * @return boolean
+     * @throws ConfigException
      */
     public static function has($key, $app = null)
     {
@@ -27,6 +28,7 @@ class Config
      * @param mixed $default Default null.
      * @param string $app Default null which means default app '*'.
      * @return mixed
+     * @throws ConfigException
      */
     public static function get($key, $default = null, $app = null)
     {
@@ -39,6 +41,7 @@ class Config
      * @param array $keys
      * @param string $app Default null which means default app '*'.
      * @return array
+     * @throws ConfigException
      */
     public static function getMany(array $keys, $app = null)
     {
@@ -50,6 +53,7 @@ class Config
      *
      * @param string $app Default null which means default app '*'.
      * @return array
+     * @throws ConfigException
      */
     public static function all($app = null)
     {
