@@ -4,7 +4,7 @@
 
 This package provides config support for a project and is primarily based on illuminate/config and vlucas/phpdotenv + support for multiple apps. It is heavely inspired of Laravel's way of handling config-files.
 
-For more detailed usage of dotevn support, you can get more information on https://packagist.org/packages/vlucas/phpdotenv
+For more detailed usage of dotenv support, you can get more information on package "vlucas/phpdotenv".
 
 Configuration files live in a directory named "config" in the root directory of your project. It is possible to change this path via Config::registerApp().
 
