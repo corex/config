@@ -6,6 +6,7 @@ use Dotenv\Dotenv;
 
 class Config
 {
+    private static $isLoaded;
     private static $repositories;
 
     /**
@@ -133,6 +134,7 @@ class Config
      */
     public static function env($key, $default = null)
     {
+        self::initialize();
         $value = getenv($key);
         if ($value === false) {
             return $default;
@@ -149,6 +151,7 @@ class Config
      */
     public static function envInt($key, $default = 0)
     {
+        self::initialize();
         return intval(self::env($key, $default));
     }
 
@@ -161,6 +164,7 @@ class Config
      */
     public static function envBool($key, $default = false)
     {
+        self::initialize();
         $value = self::env($key, $default);
         if (is_string($value)) {
             $value = strtolower($value);
@@ -171,8 +175,12 @@ class Config
     /**
      * Initialize.
      */
-    private static function initialize()
+    public static function initialize()
     {
+        if (self::$isLoaded === true) {
+            return;
+        }
+
         // Load dotenv.
         $dotenv = new Dotenv(Path::root());
         $dotenv->load();
@@ -181,5 +189,7 @@ class Config
         if (!is_array(self::$repositories)) {
             self::$repositories = [];
         }
+
+        self::$isLoaded = true;
     }
 }
