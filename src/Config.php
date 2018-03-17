@@ -2,12 +2,14 @@
 
 namespace CoRex\Config;
 
+use CoRex\Support\System\Path;
 use Dotenv\Dotenv;
 
 class Config
 {
     private static $isLoaded;
     private static $repositories;
+    private static $dotenv;
 
     /**
      * Has.
@@ -26,27 +28,67 @@ class Config
      * Get.
      *
      * @param string $key
-     * @param mixed $default Default null.
+     * @param mixed $defaultValue Default null.
      * @param string $app Default null which means default app '*'.
      * @return mixed
      * @throws ConfigException
      */
-    public static function get($key, $default = null, $app = null)
+    public static function get($key, $defaultValue = null, $app = null)
     {
-        return self::repository($app)->get($key, $default);
+        return self::repository($app)->get($key, $defaultValue);
     }
 
     /**
-     * Get many.
+     * Get integer.
      *
-     * @param array $keys
+     * @param string $key
+     * @param integer $defaultValue Default 0.
      * @param string $app Default null which means default app '*'.
-     * @return array
+     * @return integer
      * @throws ConfigException
      */
-    public static function getMany(array $keys, $app = null)
+    public static function getInt($key, $defaultValue = 0, $app = null)
     {
-        return self::repository($app)->getMany($keys);
+        return self::repository($app)->getInt($key, $defaultValue);
+    }
+
+    /**
+     * Get boolean.
+     *
+     * @param string $key
+     * @param boolean $defaultValue Default false.
+     * @param string $app Default null which means default app '*'.
+     * @return boolean
+     * @throws ConfigException
+     */
+    public static function getBool($key, $defaultValue = false, $app = null)
+    {
+        return self::repository($app)->getBool($key, $defaultValue);
+    }
+
+    /**
+     * Set.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param string $app Default null which means default app '*'.
+     * @throws ConfigException
+     */
+    public static function set($key, $value, $app = null)
+    {
+        self::repository($app)->set($key, $value);
+    }
+
+    /**
+     * Remove key.
+     *
+     * @param string $key
+     * @param string $app Default null which means default app '*'.
+     * @throws ConfigException
+     */
+    public static function remove($key, $app = null)
+    {
+        self::repository($app)->remove($key);
     }
 
     /**
@@ -96,6 +138,21 @@ class Config
     }
 
     /**
+     * Is app registered.
+     *
+     * @param string $app Default null which means default app '*'.
+     * @return boolean
+     */
+    public static function isAppRegistered($app = null)
+    {
+        self::initialize();
+        if ($app === null) {
+            $app = '*';
+        }
+        return isset(self::$repositories[$app]);
+    }
+
+    /**
      * Get repository.
      *
      * @param string $app Default null which means default app '*'.
@@ -112,7 +169,7 @@ class Config
 
         // Autoload default "config" in project root.
         if ($app == '*' && !isset(self::$repositories[$app])) {
-            $path = Path::root(['config']);
+            $path = Path::root('config');
             if (!is_dir($path)) {
                 throw new ConfigException('Path ' . $path . ' does not exist.');
             }
@@ -151,7 +208,6 @@ class Config
      */
     public static function envInt($key, $default = 0)
     {
-        self::initialize();
         return intval(self::env($key, $default));
     }
 
@@ -164,7 +220,6 @@ class Config
      */
     public static function envBool($key, $default = false)
     {
-        self::initialize();
         $value = self::env($key, $default);
         if (is_string($value)) {
             $value = strtolower($value);
@@ -173,17 +228,32 @@ class Config
     }
 
     /**
-     * Initialize.
+     * App environment (default local).
+     *
+     * @return string
      */
-    public static function initialize()
+    public static function appEnvironment()
+    {
+        return self::env('APP_ENV', Environment::LOCAL);
+    }
+
+    /**
+     * Initialize.
+     *
+     * @param string $path Default null which means root of project.
+     */
+    public static function initialize($path = null)
     {
         if (self::$isLoaded === true) {
             return;
         }
 
         // Load dotenv.
-        $dotenv = new Dotenv(Path::root());
-        $dotenv->load();
+        if ($path === null) {
+            $path = Path::root();
+        }
+        self::$dotenv = new Dotenv($path);
+        self::$dotenv->load();
 
         // Initialize repositories.
         if (!is_array(self::$repositories)) {
