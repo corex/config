@@ -2,6 +2,7 @@
 
 namespace CoRex\Config;
 
+use CoRex\Support\System\File;
 use CoRex\Support\System\Path;
 use Dotenv\Dotenv;
 
@@ -234,7 +235,7 @@ class Config
      */
     public static function appEnvironment()
     {
-        return self::env('APP_ENV', Environment::LOCAL);
+        return self::env('APP_ENV', Environment::PRODUCTION);
     }
 
     /**
@@ -252,8 +253,10 @@ class Config
         if ($path === null) {
             $path = Path::root();
         }
-        self::$dotenv = new Dotenv($path);
-        self::$dotenv->load();
+        if (File::exist($path . '/.env')) {
+            self::$dotenv = new Dotenv($path);
+            self::$dotenv->load();
+        }
 
         // Initialize repositories.
         if (!is_array(self::$repositories)) {
