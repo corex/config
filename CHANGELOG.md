@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 1.1.0
+
+### Added
+- Added Config::appPath().
+- Added Config::unregisterApp().
+
+
 ## 1.0.2
 
 ### Changed

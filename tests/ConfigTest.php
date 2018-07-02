@@ -109,9 +109,9 @@ class ConfigTest extends TestCase
             'bool1' => $bool1,
             'bool2' => $bool2
         ]);
-        $this->assertEquals($bool1, Config::getInt('test.bool1'));
-        $this->assertEquals($bool2, Config::getInt('test.bool2'));
-        $this->assertEquals(false, Config::getInt('test.unknown'));
+        $this->assertEquals($bool1, Config::getBool('test.bool1'));
+        $this->assertEquals($bool2, Config::getBool('test.bool2'));
+        $this->assertEquals(false, Config::getBool('test.unknown'));
     }
 
     /**
@@ -161,13 +161,15 @@ class ConfigTest extends TestCase
      */
     public function testAll()
     {
-        $this->prepareData([
+        $checkData = [
             'actor1' => $this->actor1,
             'actor2' => $this->actor2
-        ]);
-        $this->assertTrue(Config::has('test.actor1'));
-        $this->assertTrue(Config::has('test.actor2'));
-        $this->assertFalse(Config::has('test.unknown'));
+        ];
+        $this->prepareData($checkData);
+
+        $this->assertEquals([
+            'test' => $checkData
+        ], Config::all());
     }
 
     /**
@@ -217,6 +219,40 @@ class ConfigTest extends TestCase
     }
 
     /**
+     * Test register app when already registered.
+     */
+    public function testRegisterAppWhenAlreadyRegistered()
+    {
+        $pathApp = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        Directory::make($pathApp);
+
+        // Register apps.
+        if (!Config::isAppRegistered()) {
+            Config::registerApp($pathApp);
+        }
+
+        // Compare app registrations.
+        $apps = Config::apps();
+        $this->assertTrue(in_array('*', $apps));
+
+        // Register second time to check exception.
+        $this->expectException(ConfigException::class);
+        $this->expectExceptionMessage('Application * already registered.');
+        Config::registerApp($pathApp);
+    }
+
+    /**
+     * Test register app not found.
+     */
+    public function testRegisterAppPathNotFound()
+    {
+        $pathApp = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $this->expectException(ConfigException::class);
+        $this->expectExceptionMessage('Path ' . $pathApp . ' does not exist.');
+        Config::registerApp($pathApp);
+    }
+
+    /**
      * Test isAppRegistered.
      *
      * @throws ConfigException
@@ -238,6 +274,39 @@ class ConfigTest extends TestCase
     }
 
     /**
+     * Test unregisterApp.
+     *
+     * @throws ConfigException
+     */
+    public function testUnregisterApp()
+    {
+        $pathApp1 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        Directory::make($pathApp1);
+
+        $pathApp2 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        Directory::make($pathApp2);
+
+        Config::registerApp($pathApp1);
+        Config::registerApp($pathApp2, $this->app1);
+
+        $this->assertTrue(Config::isAppRegistered());
+        $this->assertTrue(Config::isAppRegistered($this->app1));
+        $this->assertFalse(Config::isAppRegistered($this->app2));
+
+        // Unregister and check default app.
+        Config::unregisterApp();
+        $this->assertFalse(Config::isAppRegistered());
+        $this->assertTrue(Config::isAppRegistered($this->app1));
+        $this->assertFalse(Config::isAppRegistered($this->app2));
+
+        // Unregister and check app 1.
+        Config::unregisterApp($this->app1);
+        $this->assertFalse(Config::isAppRegistered());
+        $this->assertFalse(Config::isAppRegistered($this->app1));
+        $this->assertFalse(Config::isAppRegistered($this->app2));
+    }
+
+    /**
      * Test repository.
      *
      * @throws ConfigException
@@ -247,8 +316,41 @@ class ConfigTest extends TestCase
         $pathApp1 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
         Directory::make($pathApp1);
         Config::registerApp($pathApp1);
-        $repository = COnfig::repository();
+        $repository = Config::repository();
         $this->assertInstanceOf(Repository::class, $repository);
+    }
+
+    /**
+     * Test repository path does not exist.
+     */
+    public function testRepositoryPathDoesNotExist()
+    {
+        $this->expectException(ConfigException::class);
+        $this->expectExceptionMessage('Path ' . Path::root('config') . ' does not exist.');
+        Config::repository();
+    }
+
+    /**
+     * Test repository path exist.
+     */
+    public function testRepositoryPathExist()
+    {
+        $path = Path::root('config');
+        Directory::make($path);
+        Config::repository();
+        $repository = Config::repository();
+        $this->assertInstanceOf(Repository::class, $repository);
+        $this->assertEquals($path, $repository->getPath());
+    }
+
+    /**
+     * Test repository unknown not registered.
+     */
+    public function testRepositoryUnknownNotRegistered()
+    {
+        $this->expectException(ConfigException::class);
+        $this->expectExceptionMessage('Application unknown not registered.');
+        Config::repository('unknown');
     }
 
     /**
@@ -257,6 +359,15 @@ class ConfigTest extends TestCase
     public function testEnv()
     {
         $this->assertEquals(Config::appEnvironment(), Config::env('APP_ENV'));
+    }
+
+    /**
+     * Test env default.
+     */
+    public function testEnvDefault()
+    {
+        $check = md5(mt_rand(1, 100000));
+        $this->assertEquals($check, Config::env('unknown', $check));
     }
 
     /**
@@ -292,6 +403,38 @@ class ConfigTest extends TestCase
     }
 
     /**
+     * Test appPath.
+     */
+    public function testAppPath()
+    {
+        $pathApp1 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        Directory::make($pathApp1);
+
+        $pathApp2 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        Directory::make($pathApp2);
+
+        $pathApp3 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        Directory::make($pathApp3);
+
+        // Register apps.
+        if (!Config::isAppRegistered()) {
+            Config::registerApp($pathApp1);
+        }
+        if (!Config::isAppRegistered($this->app1)) {
+            Config::registerApp($pathApp2, $this->app1);
+        }
+        if (!Config::isAppRegistered($this->app2)) {
+            Config::registerApp($pathApp3, $this->app2);
+        }
+
+        // Check app paths.
+        $this->assertEquals($pathApp1, Config::appPath());
+        $this->assertEquals($pathApp2, Config::appPath($this->app1));
+        $this->assertEquals($pathApp3, Config::appPath($this->app2));
+        $this->assertNull(Config::appPath('unknown'));
+    }
+
+    /**
      * Test initialize.
      */
     public function testInitialize()
@@ -307,6 +450,22 @@ class ConfigTest extends TestCase
         $this->assertTrue($this->getProperty('isLoaded'));
         $this->assertEquals([], $this->getProperty('repositories'));
         $this->assertInstanceOf(Dotenv::class, $this->getProperty('dotenv'));
+    }
+
+    /**
+     * Test inialize path null.
+     */
+    public function testInitializePathNull()
+    {
+        $this->clearConfig();
+
+        $this->assertNull($this->getProperty('isLoaded'));
+        $this->assertNull($this->getProperty('repositories'));
+        $this->assertNull($this->getProperty('dotenv'));
+
+        Config::initialize();
+
+        $this->assertEquals(dirname(__DIR__), Obj::getProperty('path', null, null, Config::class));
     }
 
     /**
@@ -326,7 +485,8 @@ class ConfigTest extends TestCase
     protected function tearDown()
     {
         parent::tearDown();
-//        Directory::delete($this->tempDirectory);
+        Directory::delete($this->tempDirectory);
+        Directory::delete(Path::root('config'));
     }
 
     /**

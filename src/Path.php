@@ -13,6 +13,6 @@ class Path extends SupportPath
      */
     protected static function packagePath()
     {
-        return dirname(dirname(__DIR__));
+        return dirname(__DIR__);
     }
 }

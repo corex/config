@@ -34,6 +34,17 @@ class RepositoryTest extends TestCase
     }
 
     /**
+     * Test constructor environment not supported.
+     */
+    public function testConstructorEnvironmentNotSupported()
+    {
+        putenv('APP_ENV=unknown');
+        $this->expectException(ConfigException::class);
+        $this->expectExceptionMessage('Environment unknown not supported.');
+        new Repository($this->tempDirectory);
+    }
+
+    /**
      * Test clear.
      *
      * @throws ConfigException
@@ -114,6 +125,8 @@ class RepositoryTest extends TestCase
         $this->assertFalse($repository->getBool('this.is.a.test'));
         $repository->set('this.is.a.test', true);
         $this->assertTrue($repository->getBool('this.is.a.test'));
+        $repository->set('this.is.a.test', 'true');
+        $this->assertTrue($repository->getBool('this.is.a.test'));
     }
 
     /**
@@ -184,6 +197,45 @@ class RepositoryTest extends TestCase
     }
 
     /**
+     * Test load files failed path.
+     */
+    public function testLoadFilesFailedPath()
+    {
+        Directory::delete($this->tempDirectory);
+        $repository = new Repository($this->tempDirectory);
+        $this->assertEquals([], $repository->all());
+    }
+
+    /**
+     * Test load file path relative.
+     */
+    public function testLoadFilePathRelative()
+    {
+        $items = [];
+        $repository = new Repository($this->tempDirectory);
+        $configPath = Path::packageCurrent(['tests', 'files']);
+        Obj::callMethod('loadFile', $repository, [
+            'items' => &$items,
+            'path' => $configPath,
+            'pathRelative' => 'sub',
+            'configKey' => 'test'
+        ]);
+        $this->assertEquals([
+            'sub' => [
+                'test' => [
+                    'this' => [
+                        'is' => [
+                            'a' => [
+                                'test' => 'something'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ], $items);
+    }
+
+    /**
      * Test isEnvironmentFilename.
      *
      * @throws ConfigException
@@ -210,6 +262,9 @@ class RepositoryTest extends TestCase
         parent::setUp();
         Config::initialize(Path::root('tests.Helpers'));
         $this->tempDirectory = ConfigHelper::getUniquePath('corex-config-helper');
+
+        // Set testing mode.
+        putenv('APP_ENV=testing');
     }
 
     /**

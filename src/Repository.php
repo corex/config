@@ -59,11 +59,7 @@ class Repository
      */
     public function has($key)
     {
-        try {
-            return Arr::has($this->items, $key);
-        } catch (\Exception $e) {
-            return false;
-        }
+        return Arr::has($this->items, $key);
     }
 
     /**
@@ -124,10 +120,7 @@ class Repository
      */
     public function remove($key)
     {
-        try {
-            $this->items = Arr::remove($this->items, $key);
-        } catch (\Exception $e) {
-        }
+        $this->items = Arr::remove($this->items, $key);
     }
 
     /**

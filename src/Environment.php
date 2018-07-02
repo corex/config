@@ -2,6 +2,8 @@
 
 namespace CoRex\Config;
 
+use CoRex\Support\Obj;
+
 class Environment
 {
     const LOCAL = 'local';
@@ -15,12 +17,7 @@ class Environment
      */
     public static function environments()
     {
-        try {
-            $reflectionClass = new \ReflectionClass(__CLASS__);
-            return array_values($reflectionClass->getConstants());
-        } catch (\ReflectionException $e) {
-            return [];
-        }
+        return Obj::getConstants(__CLASS__);
     }
 
     /**

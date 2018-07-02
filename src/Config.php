@@ -8,6 +8,7 @@ use Dotenv\Dotenv;
 
 class Config
 {
+    private static $path;
     private static $isLoaded;
     private static $repositories;
     private static $dotenv;
@@ -154,6 +155,22 @@ class Config
     }
 
     /**
+     * Unregister app.
+     *
+     * @param string $app Default null which means default app '*'.
+     */
+    public static function unregisterApp($app = null)
+    {
+        self::initialize();
+        if ($app === null) {
+            $app = '*';
+        }
+        if (self::isAppRegistered($app)) {
+            unset(self::$repositories[$app]);
+        }
+    }
+
+    /**
      * Get repository.
      *
      * @param string $app Default null which means default app '*'.
@@ -239,6 +256,24 @@ class Config
     }
 
     /**
+     * App path.
+     *
+     * @param string $app Default null which means default app '*'.
+     * @return string
+     */
+    public static function appPath($app = null)
+    {
+        self::initialize();
+        if ($app === null) {
+            $app = '*';
+        }
+        if (isset(self::$repositories[$app])) {
+            return call_user_func([self::$repositories[$app], 'getPath']);
+        }
+        return null;
+    }
+
+    /**
      * Initialize.
      *
      * @param string $path Default null which means root of project.
@@ -250,11 +285,12 @@ class Config
         }
 
         // Load dotenv.
-        if ($path === null) {
-            $path = Path::root();
+        self::$path = $path;
+        if (self::$path === null) {
+            self::$path = Path::root();
         }
-        if (File::exist($path . '/.env')) {
-            self::$dotenv = new Dotenv($path);
+        if (File::exist(self::$path . '/.env')) {
+            self::$dotenv = new Dotenv(self::$path);
             self::$dotenv->load();
         }
 
