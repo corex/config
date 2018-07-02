@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": ">=7.0",
-        "corex/support": "^3.0",
+        "corex/support": "^3.3",
         "vlucas/phpdotenv": "^2.4",
         "symfony/finder": "^4.0"
     },
