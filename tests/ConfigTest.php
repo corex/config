@@ -1,28 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\CoRex\Config;
 
 use CoRex\Config\Config;
-use CoRex\Config\ConfigException;
 use CoRex\Config\Environment;
+use CoRex\Config\Exceptions\ConfigException;
 use CoRex\Config\Path;
 use CoRex\Config\Repository;
-use CoRex\Support\Obj;
-use CoRex\Support\System\Directory;
+use CoRex\Filesystem\Directory;
+use CoRex\Helpers\Obj;
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use Tests\CoRex\Config\Helpers\ConfigHelper;
 
 class ConfigTest extends TestCase
 {
+    /** @var string */
     private $tempDirectory;
 
+    /** @var mixed[] */
     private $actor1 = ['firstname' => 'Sean', 'lastname' => 'Connery'];
+
+    /** @var mixed[] */
     private $actor2 = ['firstname' => 'Roger', 'lastname' => 'Moore'];
+
+    /** @var mixed[] */
     private $actor3 = ['firstname' => 'Daniel', 'lastname' => 'Craig'];
+
+    /** @var mixed[] */
     private $actor4 = ['firstname' => 'Pierce', 'lastname' => 'Brosnan'];
 
+    /** @var string */
     private $app1 = 'app.1';
+
+    /** @var string */
     private $app2 = 'app.2';
 
     /**
@@ -30,7 +43,7 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testHas()
+    public function testHas(): void
     {
         $this->prepareData([
             'actor1' => $this->actor1,
@@ -46,7 +59,7 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testGet()
+    public function testGet(): void
     {
         $this->prepareData([
             'actor1' => $this->actor1,
@@ -61,7 +74,7 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testGetEnvironment()
+    public function testGetEnvironment(): void
     {
         $this->prepareData([
             'actor1' => $this->actor1,
@@ -82,7 +95,7 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testGetInt()
+    public function testGetInt(): void
     {
         $number1 = mt_rand(1, 100000);
         $number2 = mt_rand(1, 100000);
@@ -100,10 +113,10 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testGetBool()
+    public function testGetBool(): void
     {
-        $bool1 = mt_rand(0, 1) == 1;
-        $bool2 = mt_rand(0, 1) == 1;
+        $bool1 = mt_rand(0, 1) === 1;
+        $bool2 = mt_rand(0, 1) === 1;
         $this->initialize();
         $this->prepareData([
             'bool1' => $bool1,
@@ -119,14 +132,14 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testSet()
+    public function testSet(): void
     {
         if (!Config::isAppRegistered()) {
             Config::registerApp($this->tempDirectory);
         }
         $repository = Config::repository();
         $this->assertEquals([], $repository->all());
-        $check = md5(mt_rand(1, 100000));
+        $check = md5((string)mt_rand(1, 100000));
         Config::set('test', $check);
         $this->assertEquals([
             'test' => $check
@@ -138,7 +151,7 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testRemove()
+    public function testRemove(): void
     {
         $this->prepareData([
             'actor1' => $this->actor1,
@@ -159,7 +172,7 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testAll()
+    public function testAll(): void
     {
         $checkData = [
             'actor1' => $this->actor1,
@@ -174,9 +187,10 @@ class ConfigTest extends TestCase
 
     /**
      * Test apps.
+     *
      * @throws ConfigException
      */
-    public function testApps()
+    public function testApps(): void
     {
         $this->testRegisterApp();
     }
@@ -186,15 +200,15 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testRegisterApp()
+    public function testRegisterApp(): void
     {
-        $pathApp1 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp1 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp1);
 
-        $pathApp2 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp2 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp2);
 
-        $pathApp3 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp3 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp3);
 
         // Register apps.
@@ -220,10 +234,12 @@ class ConfigTest extends TestCase
 
     /**
      * Test register app when already registered.
+     *
+     * @throws ConfigException
      */
-    public function testRegisterAppWhenAlreadyRegistered()
+    public function testRegisterAppWhenAlreadyRegistered(): void
     {
-        $pathApp = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp);
 
         // Register apps.
@@ -243,10 +259,12 @@ class ConfigTest extends TestCase
 
     /**
      * Test register app not found.
+     *
+     * @throws ConfigException
      */
-    public function testRegisterAppPathNotFound()
+    public function testRegisterAppPathNotFound(): void
     {
-        $pathApp = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('Path ' . $pathApp . ' does not exist.');
         Config::registerApp($pathApp);
@@ -257,12 +275,12 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testIsAppRegistered()
+    public function testIsAppRegistered(): void
     {
-        $pathApp1 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp1 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp1);
 
-        $pathApp2 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp2 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp2);
 
         Config::registerApp($pathApp1);
@@ -278,12 +296,12 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testUnregisterApp()
+    public function testUnregisterApp(): void
     {
-        $pathApp1 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp1 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp1);
 
-        $pathApp2 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp2 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp2);
 
         Config::registerApp($pathApp1);
@@ -311,9 +329,9 @@ class ConfigTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testRepository()
+    public function testRepository(): void
     {
-        $pathApp1 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp1 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp1);
         Config::registerApp($pathApp1);
         $repository = Config::repository();
@@ -322,8 +340,10 @@ class ConfigTest extends TestCase
 
     /**
      * Test repository path does not exist.
+     *
+     * @throws ConfigException
      */
-    public function testRepositoryPathDoesNotExist()
+    public function testRepositoryPathDoesNotExist(): void
     {
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('Path ' . Path::root('config') . ' does not exist.');
@@ -332,8 +352,10 @@ class ConfigTest extends TestCase
 
     /**
      * Test repository path exist.
+     *
+     * @throws ConfigException
      */
-    public function testRepositoryPathExist()
+    public function testRepositoryPathExist(): void
     {
         $path = Path::root('config');
         Directory::make($path);
@@ -345,8 +367,10 @@ class ConfigTest extends TestCase
 
     /**
      * Test repository unknown not registered.
+     *
+     * @throws ConfigException
      */
-    public function testRepositoryUnknownNotRegistered()
+    public function testRepositoryUnknownNotRegistered(): void
     {
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('Application unknown not registered.');
@@ -356,7 +380,7 @@ class ConfigTest extends TestCase
     /**
      * Test env.
      */
-    public function testEnv()
+    public function testEnv(): void
     {
         $this->assertEquals(Config::appEnvironment(), Config::env('APP_ENV'));
     }
@@ -364,16 +388,16 @@ class ConfigTest extends TestCase
     /**
      * Test env default.
      */
-    public function testEnvDefault()
+    public function testEnvDefault(): void
     {
-        $check = md5(mt_rand(1, 100000));
+        $check = md5((string)mt_rand(1, 100000));
         $this->assertEquals($check, Config::env('unknown', $check));
     }
 
     /**
      * Test envInt.
      */
-    public function testEnvInt()
+    public function testEnvInt(): void
     {
         $this->assertEquals(4, Config::envInt('APP_INT'));
         $this->assertTrue(is_int(Config::envInt('APP_INT')));
@@ -382,7 +406,7 @@ class ConfigTest extends TestCase
     /**
      * Test envBool.
      */
-    public function testEnvBool()
+    public function testEnvBool(): void
     {
         $this->assertTrue(Config::envBool('APP_BOOL1'));
         $this->assertTrue(is_bool(Config::envBool('APP_BOOL1')));
@@ -397,23 +421,25 @@ class ConfigTest extends TestCase
     /**
      * Test appEnvironment.
      */
-    public function testAppEnvironment()
+    public function testAppEnvironment(): void
     {
         $this->assertEquals(Environment::TESTING, Config::appEnvironment());
     }
 
     /**
      * Test appPath.
+     *
+     * @throws ConfigException
      */
-    public function testAppPath()
+    public function testAppPath(): void
     {
-        $pathApp1 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp1 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp1);
 
-        $pathApp2 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp2 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp2);
 
-        $pathApp3 = $this->tempDirectory . '/' . md5(mt_rand(1, 100000));
+        $pathApp3 = $this->tempDirectory . '/' . md5((string)mt_rand(1, 100000));
         Directory::make($pathApp3);
 
         // Register apps.
@@ -436,8 +462,10 @@ class ConfigTest extends TestCase
 
     /**
      * Test initialize.
+     *
+     * @throws \ReflectionException
      */
-    public function testInitialize()
+    public function testInitialize(): void
     {
         $this->clearConfig();
 
@@ -454,8 +482,10 @@ class ConfigTest extends TestCase
 
     /**
      * Test inialize path null.
+     *
+     * @throws \ReflectionException
      */
-    public function testInitializePathNull()
+    public function testInitializePathNull(): void
     {
         $this->clearConfig();
 
@@ -470,8 +500,10 @@ class ConfigTest extends TestCase
 
     /**
      * Setup.
+     *
+     * @throws \ReflectionException
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->tempDirectory = ConfigHelper::getUniquePath('corex-config-helper');
@@ -482,7 +514,7 @@ class ConfigTest extends TestCase
     /**
      * Tear down.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         Directory::delete($this->tempDirectory);
@@ -491,8 +523,10 @@ class ConfigTest extends TestCase
 
     /**
      * Clear config.
+     *
+     * @throws \ReflectionException
      */
-    private function clearConfig()
+    private function clearConfig(): void
     {
         Obj::setProperty('isLoaded', null, null, Config::class);
         Obj::setProperty('repositories', null, null, Config::class);
@@ -502,7 +536,7 @@ class ConfigTest extends TestCase
     /**
      * Initialize.
      */
-    private function initialize()
+    private function initialize(): void
     {
         Config::initialize(Path::root('tests.Helpers'));
     }
@@ -512,8 +546,9 @@ class ConfigTest extends TestCase
      *
      * @param string $property
      * @return mixed
+     * @throws \ReflectionException
      */
-    private function getProperty($property)
+    private function getProperty(string $property)
     {
         return Obj::getProperty($property, null, null, Config::class);
     }
@@ -521,11 +556,11 @@ class ConfigTest extends TestCase
     /**
      * Prepare data.
      *
-     * @param array $data
+     * @param mixed[] $data
      * @param string $environment Default null which means none.
      * @throws ConfigException
      */
-    private function prepareData(array $data, $environment = null)
+    private function prepareData(array $data, ?string $environment = null): void
     {
         if ($environment === null) {
             $environment = '';

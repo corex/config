@@ -1,24 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CoRex\Config;
 
-use CoRex\Support\Arr;
+use CoRex\Config\Exceptions\ConfigException;
+use CoRex\Helpers\Arr;
 use Symfony\Component\Finder\Finder;
 
 class Repository
 {
+    /** @var string */
     private $path;
+
+    /** @var string[] */
     private $environments;
+
+    /** @var string */
     private $environment;
+
+    /** @var mixed[] */
     private $items;
 
     /**
-     * Repository constructor.
+     * Repository.
      *
      * @param string $path
      * @throws ConfigException
      */
-    public function __construct($path)
+    public function __construct(string $path)
     {
         $this->clear();
         $this->path = $path;
@@ -36,7 +46,7 @@ class Repository
     /**
      * Clear.
      */
-    public function clear()
+    public function clear(): void
     {
         $this->items = [];
     }
@@ -46,7 +56,7 @@ class Repository
      *
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -55,9 +65,9 @@ class Repository
      * Determine if the given configuration value exists.
      *
      * @param string $key
-     * @return boolean
+     * @return bool
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         return Arr::has($this->items, $key);
     }
@@ -69,7 +79,7 @@ class Repository
      * @param mixed $defaultValue Default null.
      * @return mixed
      */
-    public function get($key, $defaultValue = null)
+    public function get(string $key, $defaultValue = null)
     {
         return Arr::get($this->items, $key, $defaultValue);
     }
@@ -78,10 +88,10 @@ class Repository
      * Get integer.
      *
      * @param string $key
-     * @param integer $defaultValue Default 0.
-     * @return integer
+     * @param int $defaultValue Default 0.
+     * @return int
      */
-    public function getInt($key, $defaultValue = 0)
+    public function getInt(string $key, int $defaultValue = 0): int
     {
         return intval($this->get($key, $defaultValue));
     }
@@ -90,10 +100,10 @@ class Repository
      * Get boolean.
      *
      * @param string $key
-     * @param boolean $defaultValue Default false.
-     * @return boolean
+     * @param bool $defaultValue Default false.
+     * @return bool
      */
-    public function getBool($key, $defaultValue = false)
+    public function getBool(string $key, bool $defaultValue = false): bool
     {
         $value = $this->get($key, $defaultValue);
         if (is_string($value)) {
@@ -108,7 +118,7 @@ class Repository
      * @param string $key
      * @param mixed $value
      */
-    public function set($key, $value)
+    public function set(string $key, $value): void
     {
         Arr::set($this->items, $key, $value, true);
     }
@@ -118,7 +128,7 @@ class Repository
      *
      * @param string $key
      */
-    public function remove($key)
+    public function remove(string $key): void
     {
         $this->items = Arr::remove($this->items, $key);
     }
@@ -126,9 +136,9 @@ class Repository
     /**
      * All.
      *
-     * @return array
+     * @return mixed[]
      */
-    public function all()
+    public function all(): array
     {
         return $this->items;
     }
@@ -136,7 +146,7 @@ class Repository
     /**
      * Reload.
      */
-    public function reload()
+    public function reload(): void
     {
         $this->clear();
         $this->items = $this->loadFiles();
@@ -145,9 +155,9 @@ class Repository
     /**
      * Load files.
      *
-     * @return array
+     * @return string[]
      */
-    private function loadFiles()
+    private function loadFiles(): array
     {
         $items = [];
         if (!is_dir($this->path)) {
@@ -181,17 +191,22 @@ class Repository
     /**
      * Load file.
      *
-     * @param array $items
+     * @param mixed[] $items
      * @param string $path
      * @param string $pathRelative
      * @param string $configKey
      * @param mixed $environment Default null.
      */
-    private function loadFile(array &$items, $path, $pathRelative, $configKey, $environment = null)
-    {
+    private function loadFile(
+        array &$items,
+        string $path,
+        string $pathRelative,
+        string $configKey,
+        $environment = null
+    ): void {
         // Build filename.
         $filename = $path;
-        if ($pathRelative !== null && $pathRelative != '') {
+        if ($pathRelative !== null && $pathRelative !== '') {
             $filename .= '/' . $pathRelative;
         }
         $filename .= '/' . $configKey;
@@ -208,7 +223,7 @@ class Repository
 
         // Parse config.
         $itemsData = &$items;
-        if ($pathRelative != '') {
+        if ($pathRelative !== '') {
             $pathSegments = explode('.', $pathRelative);
             foreach ($pathSegments as $pathSegment) {
                 $itemsData = &$itemsData[$pathSegment];
@@ -228,13 +243,13 @@ class Repository
      * Is environment filename.
      *
      * @param string $filename
-     * @return boolean
+     * @return bool
      */
-    private function isEnvironmentFilename($filename)
+    private function isEnvironmentFilename(string $filename): bool
     {
         $filenameEnding = substr($filename, strpos($filename, '.'));
         foreach ($this->environments as $environment) {
-            if ($filenameEnding == '.' . $environment . '.php') {
+            if ($filenameEnding === '.' . $environment . '.php') {
                 return true;
             }
         }

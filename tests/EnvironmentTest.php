@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\CoRex\Config;
 
 use CoRex\Config\Environment;
@@ -12,7 +14,7 @@ class EnvironmentTest extends TestCase
      *
      * @throws \ReflectionException
      */
-    public function testGetEnvironments()
+    public function testGetEnvironments(): void
     {
         // Fetch environment constants from class directly.
         $reflectionClass = new \ReflectionClass(Environment::class);
@@ -29,7 +31,7 @@ class EnvironmentTest extends TestCase
     /**
      * Test isSupported.
      */
-    public function testIsSupported()
+    public function testIsSupported(): void
     {
         $this->assertTrue(Environment::isSupported(Environment::LOCAL));
         $this->assertTrue(Environment::isSupported(Environment::TESTING));

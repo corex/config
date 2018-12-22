@@ -1,30 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\CoRex\Config;
 
 use CoRex\Config\Config;
-use CoRex\Config\ConfigException;
 use CoRex\Config\Environment;
+use CoRex\Config\Exceptions\ConfigException;
 use CoRex\Config\Path;
 use CoRex\Config\Repository;
-use CoRex\Support\Obj;
-use CoRex\Support\System\Directory;
+use CoRex\Filesystem\Directory;
+use CoRex\Helpers\Obj;
 use PHPUnit\Framework\TestCase;
 use Tests\CoRex\Config\Helpers\ConfigHelper;
 
 class RepositoryTest extends TestCase
 {
+    /** @var string */
     private $tempDirectory;
 
+    /** @var mixed[] */
     private $actor1 = ['firstname' => 'Sean', 'lastname' => 'Connery'];
+
+    /** @var mixed[] */
     private $actor2 = ['firstname' => 'Roger', 'lastname' => 'Moore'];
 
     /**
-     * Test constructor.
+     * Test.
      *
      * @throws ConfigException
+     * @throws \CoRex\Config\Exceptions\ConfigException
+     * @throws \ReflectionException
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $repository = new Repository($this->tempDirectory);
         $this->assertEquals($this->tempDirectory, Obj::getProperty('path', $repository));
@@ -35,8 +43,10 @@ class RepositoryTest extends TestCase
 
     /**
      * Test constructor environment not supported.
+     *
+     * @throws ConfigException
      */
-    public function testConstructorEnvironmentNotSupported()
+    public function testConstructorEnvironmentNotSupported(): void
     {
         putenv('APP_ENV=unknown');
         $this->expectException(ConfigException::class);
@@ -49,9 +59,9 @@ class RepositoryTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testClear()
+    public function testClear(): void
     {
-        $check = md5(mt_rand(1, 100000));
+        $check = md5((string)mt_rand(1, 100000));
         $repository = new Repository($this->tempDirectory);
         $repository->set('this.is.a.test', $check);
         $this->assertNotEquals([], $repository->all());
@@ -64,7 +74,7 @@ class RepositoryTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testGetPath()
+    public function testGetPath(): void
     {
         $repository = new Repository($this->tempDirectory);
         $this->assertEquals($this->tempDirectory, $repository->getPath());
@@ -75,9 +85,9 @@ class RepositoryTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testHas()
+    public function testHas(): void
     {
-        $check = md5(mt_rand(1, 100000));
+        $check = md5((string)mt_rand(1, 100000));
         $repository = new Repository($this->tempDirectory);
         $this->assertFalse($repository->has('this.is.a.test'));
         $repository->set('this.is.a.test', $check);
@@ -89,9 +99,9 @@ class RepositoryTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testGet()
+    public function testGet(): void
     {
-        $check = md5(mt_rand(1, 100000));
+        $check = md5((string)mt_rand(1, 100000));
         $repository = new Repository($this->tempDirectory);
         $this->assertNull($repository->get('this.is.a.test'));
         $repository->set('this.is.a.test', $check);
@@ -103,7 +113,7 @@ class RepositoryTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testGetInt()
+    public function testGetInt(): void
     {
         $check = mt_rand(1, 100000);
         $repository = new Repository($this->tempDirectory);
@@ -117,7 +127,7 @@ class RepositoryTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testGetBool()
+    public function testGetBool(): void
     {
         $repository = new Repository($this->tempDirectory);
         $this->assertFalse($repository->getBool('this.is.a.test'));
@@ -134,7 +144,7 @@ class RepositoryTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testSet()
+    public function testSet(): void
     {
         $this->testHas();
     }
@@ -145,9 +155,9 @@ class RepositoryTest extends TestCase
      * @throws ConfigException
      * @throws \Exception
      */
-    public function testRemove()
+    public function testRemove(): void
     {
-        $check = md5(mt_rand(1, 100000));
+        $check = md5((string)mt_rand(1, 100000));
         $repository = new Repository($this->tempDirectory);
         $this->assertNull($repository->get('this.is.a.test'));
         $repository->set('this.is.a.test', $check);
@@ -161,9 +171,9 @@ class RepositoryTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testAll()
+    public function testAll(): void
     {
-        $check = md5(mt_rand(1, 100000));
+        $check = md5((string)mt_rand(1, 100000));
         $repository = new Repository($this->tempDirectory);
         $this->assertNull($repository->get('this.is.a.test'));
         $repository->set('this.is.a.test', $check);
@@ -183,7 +193,7 @@ class RepositoryTest extends TestCase
      *
      * @throws ConfigException
      */
-    public function testLoadFilesAndLoadFile()
+    public function testLoadFilesAndLoadFile(): void
     {
         ConfigHelper::prepareConfigFiles($this->tempDirectory, 'test1', [
             'actor1' => $this->actor1
@@ -198,8 +208,10 @@ class RepositoryTest extends TestCase
 
     /**
      * Test load files failed path.
+     *
+     * @throws ConfigException
      */
-    public function testLoadFilesFailedPath()
+    public function testLoadFilesFailedPath(): void
     {
         Directory::delete($this->tempDirectory);
         $repository = new Repository($this->tempDirectory);
@@ -208,8 +220,11 @@ class RepositoryTest extends TestCase
 
     /**
      * Test load file path relative.
+     *
+     * @throws ConfigException
+     * @throws \ReflectionException
      */
-    public function testLoadFilePathRelative()
+    public function testLoadFilePathRelative(): void
     {
         $items = [];
         $repository = new Repository($this->tempDirectory);
@@ -239,8 +254,9 @@ class RepositoryTest extends TestCase
      * Test isEnvironmentFilename.
      *
      * @throws ConfigException
+     * @throws \ReflectionException
      */
-    public function testIsEnvironmentFilename()
+    public function testIsEnvironmentFilename(): void
     {
         $repository = new Repository($this->tempDirectory);
 
@@ -257,7 +273,7 @@ class RepositoryTest extends TestCase
     /**
      * Setup.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         Config::initialize(Path::root('tests.Helpers'));
@@ -270,7 +286,7 @@ class RepositoryTest extends TestCase
     /**
      * Tear down.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         Directory::delete($this->tempDirectory);

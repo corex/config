@@ -1,4 +1,11 @@
-# ChangeLog
+# Changelog
+
+## 2.0.0
+
+### Changed
+- Require php 7.2+
+- Updated code to comply with Coding Standard.
+- Removed corex/support in favor of other packages.
 
 ## 1.1.0
 
@@ -22,4 +29,4 @@
 ## 1.0.0
 
 ### Added
-- Initial development.
+- Initial release.

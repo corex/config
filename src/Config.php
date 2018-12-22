@@ -1,16 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CoRex\Config;
 
-use CoRex\Support\System\File;
-use CoRex\Support\System\Path;
+use CoRex\Config\Exceptions\ConfigException;
+use CoRex\Filesystem\File;
 use Dotenv\Dotenv;
 
 class Config
 {
+    /** @var string */
     private static $path;
+
+    /** @var bool */
     private static $isLoaded;
+
+    /** @var Repository[] */
     private static $repositories;
+
+    /** @var Dotenv */
     private static $dotenv;
 
     /**
@@ -18,10 +27,10 @@ class Config
      *
      * @param string $key
      * @param string $app Default null which means default app '*'.
-     * @return boolean
+     * @return bool
      * @throws ConfigException
      */
-    public static function has($key, $app = null)
+    public static function has(string $key, ?string $app = null): bool
     {
         return self::repository($app)->has($key);
     }
@@ -35,7 +44,7 @@ class Config
      * @return mixed
      * @throws ConfigException
      */
-    public static function get($key, $defaultValue = null, $app = null)
+    public static function get(string $key, $defaultValue = null, ?string $app = null)
     {
         return self::repository($app)->get($key, $defaultValue);
     }
@@ -44,12 +53,12 @@ class Config
      * Get integer.
      *
      * @param string $key
-     * @param integer $defaultValue Default 0.
+     * @param int $defaultValue Default 0.
      * @param string $app Default null which means default app '*'.
-     * @return integer
+     * @return int
      * @throws ConfigException
      */
-    public static function getInt($key, $defaultValue = 0, $app = null)
+    public static function getInt(string $key, int $defaultValue = 0, ?string $app = null): int
     {
         return self::repository($app)->getInt($key, $defaultValue);
     }
@@ -58,12 +67,12 @@ class Config
      * Get boolean.
      *
      * @param string $key
-     * @param boolean $defaultValue Default false.
+     * @param bool $defaultValue Default false.
      * @param string $app Default null which means default app '*'.
-     * @return boolean
+     * @return bool
      * @throws ConfigException
      */
-    public static function getBool($key, $defaultValue = false, $app = null)
+    public static function getBool(string $key, bool $defaultValue = false, ?string $app = null): bool
     {
         return self::repository($app)->getBool($key, $defaultValue);
     }
@@ -76,7 +85,7 @@ class Config
      * @param string $app Default null which means default app '*'.
      * @throws ConfigException
      */
-    public static function set($key, $value, $app = null)
+    public static function set(string $key, $value, ?string $app = null): void
     {
         self::repository($app)->set($key, $value);
     }
@@ -88,7 +97,7 @@ class Config
      * @param string $app Default null which means default app '*'.
      * @throws ConfigException
      */
-    public static function remove($key, $app = null)
+    public static function remove(string $key, ?string $app = null): void
     {
         self::repository($app)->remove($key);
     }
@@ -97,10 +106,10 @@ class Config
      * All.
      *
      * @param string $app Default null which means default app '*'.
-     * @return array
+     * @return mixed[]
      * @throws ConfigException
      */
-    public static function all($app = null)
+    public static function all(?string $app = null): array
     {
         return self::repository($app)->all();
     }
@@ -108,12 +117,16 @@ class Config
     /**
      * Get apps.
      *
-     * @return array
+     * @return string[]
      */
-    public static function apps()
+    public static function apps(): array
     {
         self::initialize();
-        return array_keys(self::$repositories);
+        $apps = [];
+        foreach (self::$repositories as $name => $repository) {
+            $apps[] = $name;
+        }
+        return $apps;
     }
 
     /**
@@ -123,7 +136,7 @@ class Config
      * @param string $app Default null which means default app '*'.
      * @throws ConfigException
      */
-    public static function registerApp($path, $app = null)
+    public static function registerApp(string $path, ?string $app = null): void
     {
         self::initialize();
         if ($app === null) {
@@ -143,9 +156,9 @@ class Config
      * Is app registered.
      *
      * @param string $app Default null which means default app '*'.
-     * @return boolean
+     * @return bool
      */
-    public static function isAppRegistered($app = null)
+    public static function isAppRegistered(?string $app = null): bool
     {
         self::initialize();
         if ($app === null) {
@@ -159,7 +172,7 @@ class Config
      *
      * @param string $app Default null which means default app '*'.
      */
-    public static function unregisterApp($app = null)
+    public static function unregisterApp(?string $app = null): void
     {
         self::initialize();
         if ($app === null) {
@@ -174,11 +187,10 @@ class Config
      * Get repository.
      *
      * @param string $app Default null which means default app '*'.
-     *
      * @return Repository
      * @throws ConfigException
      */
-    public static function repository($app = null)
+    public static function repository(?string $app = null): Repository
     {
         self::initialize();
         if ($app === null) {
@@ -186,7 +198,7 @@ class Config
         }
 
         // Autoload default "config" in project root.
-        if ($app == '*' && !isset(self::$repositories[$app])) {
+        if ($app === '*' && !isset(self::$repositories[$app])) {
             $path = Path::root('config');
             if (!is_dir($path)) {
                 throw new ConfigException('Path ' . $path . ' does not exist.');
@@ -207,7 +219,7 @@ class Config
      * @param mixed $default Default null.
      * @return mixed
      */
-    public static function env($key, $default = null)
+    public static function env(string $key, $default = null)
     {
         self::initialize();
         $value = getenv($key);
@@ -221,10 +233,10 @@ class Config
      * Env int.
      *
      * @param string $key
-     * @param integer $default Default 0.
-     * @return integer
+     * @param int $default Default 0.
+     * @return int
      */
-    public static function envInt($key, $default = 0)
+    public static function envInt(string $key, int $default = 0): int
     {
         return intval(self::env($key, $default));
     }
@@ -233,10 +245,10 @@ class Config
      * Env bool.
      *
      * @param string $key
-     * @param boolean $default Default false.
-     * @return boolean
+     * @param bool $default Default false.
+     * @return bool
      */
-    public static function envBool($key, $default = false)
+    public static function envBool(string $key, bool $default = false): bool
     {
         $value = self::env($key, $default);
         if (is_string($value)) {
@@ -250,7 +262,7 @@ class Config
      *
      * @return string
      */
-    public static function appEnvironment()
+    public static function appEnvironment(): string
     {
         return self::env('APP_ENV', Environment::PRODUCTION);
     }
@@ -261,7 +273,7 @@ class Config
      * @param string $app Default null which means default app '*'.
      * @return string
      */
-    public static function appPath($app = null)
+    public static function appPath(?string $app = null): ?string
     {
         self::initialize();
         if ($app === null) {
@@ -278,7 +290,7 @@ class Config
      *
      * @param string $path Default null which means root of project.
      */
-    public static function initialize($path = null)
+    public static function initialize(?string $path = null): void
     {
         if (self::$isLoaded === true) {
             return;

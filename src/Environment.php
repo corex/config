@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CoRex\Config;
 
-use CoRex\Support\Obj;
+use CoRex\Helpers\Obj;
 
 class Environment
 {
-    const LOCAL = 'local';
-    const PRODUCTION = 'production';
-    const TESTING = 'testing';
+    public const LOCAL = 'local';
+    public const PRODUCTION = 'production';
+    public const TESTING = 'testing';
 
     /**
      * Get environments.
      *
-     * @return array
+     * @return string[]
      */
-    public static function environments()
+    public static function environments(): array
     {
         return Obj::getConstants(__CLASS__);
     }
@@ -24,9 +26,9 @@ class Environment
      * Is supported.
      *
      * @param string $environment
-     * @return boolean
+     * @return bool
      */
-    public static function isSupported($environment)
+    public static function isSupported(string $environment): bool
     {
         return in_array($environment, self::environments());
     }
