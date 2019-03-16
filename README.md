@@ -1,6 +1,9 @@
 # CoRex Config
 
-**_Versioning for this package follows http://semver.org/. Backwards compatibility might break on upgrade to major versions._**
+![License](https://img.shields.io/packagist/l/corex/config.svg)
+![Build Status](https://travis-ci.org/corex/config.svg?branch=master)
+![codecov](https://codecov.io/gh/corex/config/branch/master/graph/badge.svg)
+
 
 This package provides config support for a project and has support for multiple apps. It is heavely inspired of Laravel's way of handling config-files.
 
