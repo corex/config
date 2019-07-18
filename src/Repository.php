@@ -176,7 +176,7 @@ class Repository
             }
 
             $pathRelative = call_user_func([$entry, 'getRelativePath']);
-            $configKey = rtrim($basename, '.php');
+            $configKey = str_replace('.php', '', $basename);
 
             // Load main config-file.
             $this->loadFile($items, $this->path, $pathRelative, $configKey);
