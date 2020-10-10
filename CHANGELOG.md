@@ -1,5 +1,25 @@
 # Changelog
 
+## 3.0.0
+
+### Added
+- Added Config->getString().
+- Added Env::getAppName().
+- Added Env::getAppDebug().
+
+### Changed
+- Config::env(), Config::envInt() and Config::envBool() moved to Env::class.
+- Environment::getEnvironments() and Environment::isSupported() moved to Env::class.
+- Config::appEnvironment() moved to Env::getAppEnvironment().
+
+### Removed
+- Removed requirement of vlucas/phpdotenv and made it a suggestion.
+- Removed support for apps.
+- Removed static approach. Config::class must be instantiated.
+- Removed Config::all() in favor of Config->get({section}).
+- Removed Config::repository() in favor of Config->get({section}).
+- Options to modify configuration on the fly has been removed.
+
 ## 2.0.1
 
 ### Fixed

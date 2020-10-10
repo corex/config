@@ -6,6 +6,6 @@ namespace CoRex\Config\Exceptions;
 
 use Exception;
 
-class ConfigException extends Exception
+class EnvironmentException extends Exception
 {
 }
