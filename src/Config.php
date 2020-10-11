@@ -7,12 +7,12 @@ namespace CoRex\Config;
 use CoRex\Config\Exceptions\EnvironmentException;
 use CoRex\Config\Helpers\Value;
 use CoRex\Config\Interfaces\ConfigInterface;
-use CoRex\Config\Interfaces\StorageInterface;
+use CoRex\Config\Interfaces\LoaderInterface;
 
 class Config implements ConfigInterface
 {
-    /** @var StorageInterface */
-    private $storage;
+    /** @var LoaderInterface */
+    private $loader;
 
     /** @var mixed[] */
     private $data = [];
@@ -20,11 +20,11 @@ class Config implements ConfigInterface
     /**
      * Config constructor.
      *
-     * @param StorageInterface $storage
+     * @param LoaderInterface $loader
      */
-    public function __construct(StorageInterface $storage)
+    public function __construct(LoaderInterface $loader)
     {
-        $this->storage = $storage;
+        $this->loader = $loader;
     }
 
     /**
@@ -116,9 +116,9 @@ class Config implements ConfigInterface
             return $envValue;
         }
 
-        // Load from storage if not loaded.
+        // Load if not loaded.
         if (!array_key_exists($section, $this->data)) {
-            $this->data[$section] = $this->storage->load($section, Env::getAppEnvironment());
+            $this->data[$section] = $this->loader->load($section, Env::getAppEnvironment());
         }
 
         // Get data for digging.

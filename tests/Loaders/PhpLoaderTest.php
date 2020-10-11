@@ -2,39 +2,39 @@
 
 declare(strict_types=1);
 
-namespace Tests\CoRex\Config\Storages;
+namespace Tests\CoRex\Config\Loaders;
 
 use CoRex\Config\Env;
-use CoRex\Config\Exceptions\StorageException;
-use CoRex\Config\Interfaces\StorageInterface;
-use CoRex\Config\Storages\PhpStorage;
+use CoRex\Config\Exceptions\LoaderException;
+use CoRex\Config\Interfaces\LoaderInterface;
+use CoRex\Config\Loaders\PhpLoader;
 use CoRex\Helpers\Obj;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
-class PhpStorageTest extends TestCase
+class PhpLoaderTest extends TestCase
 {
     /** @var string */
     private $path;
 
     /**
-     * Test implementing storage interface.
+     * Test implementing loader interface.
      */
-    public function testImplementingStorageInterface(): void
+    public function testImplementingLoaderInterface(): void
     {
-        $this->assertTrue(Obj::hasInterface(PhpStorage::class, StorageInterface::class));
+        $this->assertTrue(Obj::hasInterface(PhpLoader::class, LoaderInterface::class));
     }
 
     /**
      * Test constructor.
      *
-     * @throws StorageException
+     * @throws LoaderException
      * @throws ReflectionException
      */
     public function testConstructor(): void
     {
-        $storage = new PhpStorage($this->path);
-        $this->assertSame($this->path, Obj::getProperty('path', $storage));
+        $loader = new PhpLoader($this->path);
+        $this->assertSame($this->path, Obj::getProperty('path', $loader));
     }
 
     /**
@@ -42,39 +42,39 @@ class PhpStorageTest extends TestCase
      */
     public function testConstructorWithInvalidPath(): void
     {
-        $this->expectException(StorageException::class);
-        $this->expectExceptionMessage('Storage path is not valid.');
-        new PhpStorage('/a/path/which/does/not/exist');
+        $this->expectException(LoaderException::class);
+        $this->expectExceptionMessage('Loader path is not valid.');
+        new PhpLoader('/a/path/which/does/not/exist');
     }
 
     /**
      * Test load.
      *
-     * @throws StorageException
+     * @throws LoaderException
      */
     public function testLoad(): void
     {
-        $storage = new PhpStorage($this->path);
+        $loader = new PhpLoader($this->path);
         $check = require $this->path . '/bond.php';
-        $data = $storage->load('bond', Env::PRODUCTION);
+        $data = $loader->load('bond', Env::PRODUCTION);
         $this->assertSame($check, $data);
     }
 
     /**
      * Test load with environment testing.
      *
-     * @throws StorageException
+     * @throws LoaderException
      */
     public function testLoadTesting(): void
     {
-        $storage = new PhpStorage($this->path);
+        $loader = new PhpLoader($this->path);
 
         $check = array_replace_recursive(
             require $this->path . '/bond.php',
             require $this->path . '/testing/bond.php'
         );
 
-        $data = $storage->load('bond', Env::TESTING);
+        $data = $loader->load('bond', Env::TESTING);
 
         $this->assertSame($check, $data);
     }
@@ -82,12 +82,12 @@ class PhpStorageTest extends TestCase
     /**
      * Test load() when not found.
      *
-     * @throws StorageException
+     * @throws LoaderException
      */
     public function testLoadNotFound(): void
     {
-        $storage = new PhpStorage($this->path);
-        $this->assertSame([], $storage->load('unknown', Env::PRODUCTION));
+        $loader = new PhpLoader($this->path);
+        $this->assertSame([], $loader->load('unknown', Env::PRODUCTION));
     }
 
     /**

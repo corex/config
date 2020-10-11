@@ -5,20 +5,20 @@
 ![codecov](https://codecov.io/gh/corex/config/branch/master/graph/badge.svg)
 
 This package has been rewritten from scratch. The purpose was to modernize
-the code and add support for storages. And at the same time keep it as simple
+the code and add support for loaders. And at the same time keep it as simple
 as possible. Breaking changes can be found in CHANGELOG.
 
-## Storages
+## Loaders
 
 Previous versions of this package only supported configurations living in {root}/config directory through php files.
-This version now support storages and requires you to setup a storage prior to instantiating configuration class.
+This version now support loaders and requires you to setup a loader prior to instantiating configuration class.
 
 ```php
-$storage = new PhpStorage('/my/path/to/storage');
-$config = new Config($storage);
+$loader = new PhpLoader('/path/to/config/files');
+$config = new Config($loader);
 ```
 
-You can easily implement another storage i.e. Yaml, Database, etc...., by implementing StorageInterface::class.
+You can easily implement another loader i.e. Yaml, Database, etc...., by implementing LoaderInterface::class.
 
 ## Fetching values
 

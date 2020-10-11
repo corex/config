@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.1
+
+### Changed
+- Changed to more correct naming from "Storage" to "Loader".
+
 ## 3.0.0
 
 ### Added

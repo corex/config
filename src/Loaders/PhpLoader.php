@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace CoRex\Config\Storages;
+namespace CoRex\Config\Loaders;
 
-use CoRex\Config\Exceptions\StorageException;
-use CoRex\Config\Interfaces\StorageInterface;
+use CoRex\Config\Exceptions\LoaderException;
+use CoRex\Config\Interfaces\LoaderInterface;
 
-class PhpStorage implements StorageInterface
+class PhpLoader implements LoaderInterface
 {
     /** @var string */
     private $path;
 
     /**
-     * FileStorage.
+     * PhpLoader constructor.
      *
      * @param string $path
-     * @throws StorageException
+     * @throws LoaderException
      */
     public function __construct(string $path)
     {
         $this->path = rtrim($path, '/');
 
-        // Validate storage path.
+        // Validate path.
         if (!is_dir($this->path)) {
-            throw new StorageException('Storage path is not valid.');
+            throw new LoaderException('Loader path is not valid.');
         }
     }
 

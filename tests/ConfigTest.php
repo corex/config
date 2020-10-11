@@ -9,7 +9,7 @@ use CoRex\Config\Exceptions\EnvironmentException;
 use CoRex\Helpers\Obj;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
-use Tests\CoRex\Config\HelperClasses\ArrayStorage;
+use Tests\CoRex\Config\HelperClasses\ArrayLoader;
 
 class ConfigTest extends TestCase
 {
@@ -146,8 +146,8 @@ class ConfigTest extends TestCase
             ]
         ];
 
-        $storage = new ArrayStorage($data);
-        $this->config = new Config($storage);
+        $loader = new ArrayLoader($data);
+        $this->config = new Config($loader);
     }
 
     /**

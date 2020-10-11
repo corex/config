@@ -6,6 +6,6 @@ namespace CoRex\Config\Exceptions;
 
 use Exception;
 
-class StorageException extends Exception
+class LoaderException extends Exception
 {
 }

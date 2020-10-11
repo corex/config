@@ -1,7 +1,7 @@
 {
     "name": "corex/config",
     "type": "library",
-    "description": "Config Component (support for storages)",
+    "description": "Config Component",
     "license": "MIT",
     "keywords": [
         "config"

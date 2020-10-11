@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CoRex\Config\Interfaces;
 
-interface StorageInterface
+interface LoaderInterface
 {
     /**
      * Load configuration.

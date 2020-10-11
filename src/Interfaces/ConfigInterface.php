@@ -11,9 +11,9 @@ interface ConfigInterface
     /**
      * Config constructor.
      *
-     * @param StorageInterface $storage
+     * @param LoaderInterface $loader
      */
-    public function __construct(StorageInterface $storage);
+    public function __construct(LoaderInterface $loader);
 
     /**
      * Determine if the given configuration value exists.

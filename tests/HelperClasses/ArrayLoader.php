@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\CoRex\Config\HelperClasses;
 
-use CoRex\Config\Interfaces\StorageInterface;
+use CoRex\Config\Interfaces\LoaderInterface;
 
-class ArrayStorage implements StorageInterface
+class ArrayLoader implements LoaderInterface
 {
     /** @var mixed[] */
     private $data;
 
     /**
-     * ArrayStorage.
+     * ArrayLoader.
      *
      * @param mixed[] $data
      */
