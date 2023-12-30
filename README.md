@@ -5,62 +5,130 @@
 [![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/config/d409d31a9138bc37c905b4b4727bebe1/raw/test-coverage__master.json)](https://github.com/corex/config/actions)
 [![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/config/d409d31a9138bc37c905b4b4727bebe1/raw/phpstan-level__master.json)](https://github.com/corex/config/actions)
 
-This package has been rewritten from scratch. The purpose was to modernize
-the code and add support for loaders. And at the same time keep it as simple
-as possible. Breaking changes can be found in CHANGELOG.
+Package has been rewritten to support adapters in favor of loaders. Breaking changes can be found in CHANGELOG.
 
-## Loaders
+Getting configuration values works by creating instance of Config::class and use methods to get values. Multiple adapters are supported.
 
-Previous versions of this package only supported configurations living in {root}/config directory through php files.
-This version now support loaders and requires you to setup a loader prior to instantiating configuration class.
-
+Example:
 ```php
-$loader = new PhpLoader('/path/to/config/files');
-$config = new Config($loader);
+$adapter = new ArrayAdapter([
+    'actor' => [
+        'name' => 'James Bond',
+    ],
+]);
+
+$config = new Config([$adapter]);
+
+$actorName = $config->getString('actor.name');
 ```
 
-You can easily implement another loader i.e. Yaml, Database, etc...., by implementing LoaderInterface::class.
+## ConfigFactory
 
-## Fetching values
+A ConfigFactory exists to make it easier to create instances of Config::class.
 
-Following methods exists to help fetch values.
-
-- has() which check if a value is present.
-- get() to get value. No type-conversion.
-- getString() will always return a string.
-- getInt() will always return an int.
-- getBool() will always return a bool. Following values will be considered true: [1, true, '1', 'true', 'yes', 'on'].
-
-Example of config file "database.php".
+Example:
 ```php
-return [
-    'main' => [
-        'host' => 'myhost',
-        'primary' => true
-    ]
-];
+$config = (new ConfigFactory())
+    ->createWithServerAndEnvAndProjectConfigArrayFileAdapter();
 ```
 
-Example of fetching a value with default value.
+The above example exposes 3 adapters ServerAdapter, EnvAdapter and ProjectConfigArrayFileAdapter.
+
+From above example, when getting value, the process is following.
+- ServerAdapter is checked for key. If found, value is returned.
+- EnvAdapter is checked for key. If found, value is returned.
+- ProjectConfigArrayFileAdapter is checked for key. If found, value is returned.
+
+Based on various methods to get values, a null is returned or an exception is thrown.
+
+More methods exists, but in the situation where they does not fit in, instantiate Config::class with your own order of interfaces.
+
+
+## Keys
+
+Every key must be specified as dot notation e.g. "actor.name".
+
+> "_" and "-" will not be treated as separators.
+
+> When using ServerAdapter and EnvAdapter, the key will be converted to shoutcase e.g. ACTOR_NAME. This makes it easy to override values in e.g. cloud environments.
+
+On key object, multiple methods exists to get key in various formats. Use `custom()` to build your own.
+
+
+## Config
+
+Various methods exists on config-class for getting values in correct format. There exists methods for getting specific type with or without null eg. "getString()" or "getStringOrNull()" . Following types are supported: string, int, bool translated-bool, double, array, list.
+
+For all type methods, value from adapters will be checked if they are correct type, otherwise an exception is thrown.
+
+> "translated-bool" translates/converts following values to boolean.
+>
+> Values for true : ['true', true, 'yes', 'on', 1, '1'].
+>
+> Values for false : ['false', false, 'no', 'off', 0, '0'].
+
+> "list" means an array where keys are numeric keys 0..n.
+
+
+## Adapters
+
+Following adapters expose arrays as the basis for configuration values.
+
+**ArrayAdapter**
+
+Serve simple array.
 
 ```php
-$host = $config->get('database.main.host', 'localhost');
-$isPrimary = $config->getBool('database.main.primary');
+$adapter = new ArrayAdapter([
+    'actor' => [
+        'name' => 'James Bond',
+    ],
+]);
 ```
 
-## Environment variables
 
-It is possible to override configuration values via environment variables.
-If you have a key i.e. "database.main.host" you can override it by setting an environment variable
-called "DATABASE_MAIN_HOST".
+**EnvAdapter**
 
-Hint:
-It is recommended to use vlucas/phpdotenv which loads environment variables from `.env`.
+Serve $_ENV global array.
 
-A template `.env.example` exists for you to copy and fill in values of your own.
+```php
+$adapter = new EnvAdapter();
+```
 
-App-specific environment variables APP_NAME, APP_ENV and APP_DEBUG are supported through Env::class.
 
-- APP_NAME can be fetched through Env::getAppName().
-- APP_ENV can be fetched through Env::getAppEnvironment(). "local", "testing" and "production" are supported. Env::getAppEnvironment() defaults to Env::PRODUCTION.
-- APP_DEBUG can be fetched through Env::getAppDebug(). Following values will be considered true: [1, true, '1', 'true', 'yes', 'on'].
+**ServerAdapter**
+
+Serve $_SERVER global array.
+
+```php
+$adapter = new ServerAdapter();
+```
+
+
+**ArrayFileAdapter**
+
+Serve php array files outside project root.
+
+```php
+$adapter = new ArrayFileAdapter(new Filesystem(), '/config-dir-outside-project-root');
+```
+
+
+**ProjectPathArrayFileAdapter - Serve**
+
+Serve php array files in project root from relative directory.
+
+```php
+$adapter = new ProjectPathArrayFileAdapter(new Filesystem(), 'my-config-dir');
+```
+
+
+**ProjectConfigArrayFileAdapter**
+
+Serve php array files in project root from relative directory called "config".
+
+```php
+$adapter = new ProjectConfigArrayFileAdapter(new Filesystem());
+```
+
+> If above adapters are not enough, it is possible to write your own by extending AbstractAdapter or implementing AdapterInterface.
