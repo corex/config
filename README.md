@@ -5,7 +5,7 @@
 [![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/config/d409d31a9138bc37c905b4b4727bebe1/raw/test-coverage__master.json)](https://github.com/corex/config/actions)
 [![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/config/d409d31a9138bc37c905b4b4727bebe1/raw/phpstan-level__master.json)](https://github.com/corex/config/actions)
 
-Package has been rewritten to support adapters in favor of loaders. Breaking changes can be found in CHANGELOG.
+> **Breaking changes** - this package has been rewritten from scratch to be more strict and flexible to use. Adapters are supported in favor of loaders. Breaking changes can be found in CHANGELOG.
 
 Getting configuration values works by creating instance of Config::class and use methods to get values. Multiple adapters are supported.
 
