@@ -2,8 +2,8 @@
 
 ![license](https://img.shields.io/github/license/corex/config?label=license)
 ![build](https://github.com/corex/config/workflows/build/badge.svg?branch=master)
-[![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/config/d409d31a9138bc37c905b4b4727bebe1/raw/test-coverage__master.json)](https://github.com/corex/config/actions)
-[![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/config/d409d31a9138bc37c905b4b4727bebe1/raw/phpstan-level__master.json)](https://github.com/corex/config/actions)
+[![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/corex/d409d31a9138bc37c905b4b4727bebe1/raw/test-coverage__master.json)](https://github.com/corex/config/actions)
+[![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/corex/d409d31a9138bc37c905b4b4727bebe1/raw/phpstan-level__master.json)](https://github.com/corex/config/actions)
 
 > **Breaking changes** - this package has been rewritten from scratch to be more strict and flexible to use. Adapters are supported in favor of loaders. Breaking changes can be found in CHANGELOG.
 
