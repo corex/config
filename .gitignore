@@ -2,4 +2,6 @@
 /vendor/
 /log
 /.phpunit.result.cache
-/TODO.md
+/.phpunit.cache
+/.idea
+/var

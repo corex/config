@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.0.0
+
+### Changes
+- Removed travis support in favor of github actions.
+- Rewritten package from scratch to be more strict.
+- Raised php to ^8.1.
+- Support for adapters added in favor of loader.
+
+## Removed
+- Removed support for specifying environment.
+
 ## 3.0.1
 
 ### Changed
