@@ -14,7 +14,6 @@ use CoRex\Config\Data\Value;
 use CoRex\Config\Exceptions\AdapterException;
 use CoRex\Config\Exceptions\ConfigException;
 use CoRex\Config\Exceptions\TypeException;
-use CoRex\Config\Key\Key;
 use CoRex\Config\Key\KeyInterface;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -92,56 +91,14 @@ class ConfigTest extends TestCase
         $this->assertFalse($this->config->has('unknown.key'));
     }
 
-    public function testGetValueObjectWorks(): void
-    {
-        $valueObject = $this->config->getValueObject('actor1.firstname');
-
-        $this->assertSame($this->adapter, $valueObject->getAdapter());
-        $this->assertTrue($valueObject->hasKey());
-        $this->assertEquals(new Key('actor1.firstname'), $valueObject->getKey());
-        $this->assertSame($this->data['actor1']['firstname'], $valueObject->getValue());
-    }
-
-    public function testGetValueObjectUnknownKey(): void
-    {
-        $valueObject = $this->config->getValueObject('unknown.key');
-
-        $this->assertNull($valueObject->getAdapter());
-        $this->assertFalse($valueObject->hasKey());
-        $this->assertEquals(new Key('unknown.key'), $valueObject->getKey());
-        $this->assertNull($valueObject->getValue());
-    }
-
-    public function testGetMixedOrNullWorks(): void
-    {
-        $this->assertSame(
-            $this->data['actor1']['firstname'],
-            $this->config->getMixedOrNull('actor1.firstname')
-        );
-
-        $this->assertNull($this->config->getMixedOrNull('unknown.key'));
-    }
-
     public function testGetMixedWorks(): void
     {
         $this->assertSame(
             $this->data['actor1']['firstname'],
             $this->config->getMixed('actor1.firstname')
         );
-    }
 
-    public function testGetMixedFailed(): void
-    {
-        $this->expectException(ConfigException::class);
-        $this->expectExceptionMessage(
-            sprintf(
-                'Value for key "%s" does not exist when using "%s()".',
-                'unknown.key',
-                'getMixed'
-            )
-        );
-
-        $this->config->getMixed('unknown.key');
+        $this->assertNull($this->config->getMixed('unknown.key'));
     }
 
     public function testGetStringOrNullWorks(): void

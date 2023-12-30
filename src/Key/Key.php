@@ -12,11 +12,15 @@ use CoRex\Config\Exceptions\KeyException;
  */
 class Key implements KeyInterface
 {
+    private KeyType $keyType;
+
     /** @var array<string> */
     private array $parts;
 
-    public function __construct(string $key)
+    public function __construct(KeyType $keyType, string $key)
     {
+        $this->keyType = $keyType;
+
         $parts = trim($key) !== '' ? explode('.', $key) : [];
 
         if (count($parts) === 0) {
@@ -60,6 +64,16 @@ class Key implements KeyInterface
     public function getSection(): string
     {
         return $this->parts[0];
+    }
+
+    /**
+     * Get key type.
+     *
+     * @return KeyType
+     */
+    public function getKeyType(): KeyType
+    {
+        return $this->keyType;
     }
 
     /**

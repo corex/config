@@ -6,6 +6,7 @@ namespace Tests\CoRex\Config\Unit\Adapter;
 
 use CoRex\Config\Adapter\EnvAdapter;
 use CoRex\Config\Key\Key;
+use CoRex\Config\Key\KeyType;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -18,7 +19,7 @@ class EnvAdapterTest extends TestCase
         $fullname = 'James Bond';
         $_ENV['ACTOR_NAME'] = $fullname; // phpcs:ignore
 
-        $key = new Key('actor.name');
+        $key = new Key(KeyType::MIXED, 'actor.name');
 
         $adapter = new EnvAdapter();
         $value = $adapter->getValue($key);

@@ -8,6 +8,7 @@ use CoRex\Config\Adapter\ProjectPathArrayFileAdapter;
 use CoRex\Config\Exceptions\AdapterException;
 use CoRex\Config\Filesystem\FilesystemInterface;
 use CoRex\Config\Key\Key;
+use CoRex\Config\Key\KeyType;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -45,7 +46,7 @@ class ProjectPathArrayFileAdapterTest extends TestCase
             ->with('/my/config/files/test/bond.php')
             ->willReturn($data);
 
-        $key = new Key('bond.actor.name');
+        $key = new Key(KeyType::MIXED, 'bond.actor.name');
 
         $adapter = new ProjectPathArrayFileAdapter($filesystem, 'test');
         $value = $adapter->getValue($key);

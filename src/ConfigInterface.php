@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace CoRex\Config;
 
-use CoRex\Config\Data\Value;
-
 interface ConfigInterface
 {
     /**
@@ -17,23 +15,7 @@ interface ConfigInterface
     public function has(string $configKey): bool;
 
     /**
-     * Get resolved value object for specified key.
-     *
-     * @param string $configKey
-     * @return Value
-     */
-    public function getValueObject(string $configKey): Value;
-
-    /**
-     * Get mixed value or null.
-     *
-     * @param string $configKey
-     * @return mixed
-     */
-    public function getMixedOrNull(string $configKey): mixed;
-
-    /**
-     * Get mixed value and throws exception if null.
+     * Get mixed value including null.
      *
      * @param string $configKey
      * @return mixed

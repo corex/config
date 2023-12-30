@@ -11,6 +11,8 @@ use CoRex\Config\Exceptions\AdapterException;
 use CoRex\Config\Exceptions\ConfigException;
 use CoRex\Config\Exceptions\TypeException;
 use CoRex\Config\Key\Key;
+use CoRex\Config\Key\KeyInterface;
+use CoRex\Config\Key\KeyType;
 
 class Config implements ConfigInterface
 {
@@ -60,34 +62,7 @@ class Config implements ConfigInterface
      */
     public function has(string $configKey): bool
     {
-        return $this->getValueObject($configKey)->hasKey();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getValueObject(string $configKey): Value
-    {
-        $key = new Key($configKey);
-
-        foreach ($this->adapters as $adapter) {
-            $value = $adapter->getValue($key);
-            if ($value->hasKey()) {
-                return $value;
-            }
-        }
-
-        return new Value(null, $key, null);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getMixedOrNull(string $configKey): mixed
-    {
-        $valueObject = $this->getValueObject($configKey);
-
-        return $valueObject->hasKey() ? $valueObject->getValue() : null;
+        return $this->getValueObject(new Key(KeyType::MIXED, $configKey))->hasKey();
     }
 
     /**
@@ -95,11 +70,9 @@ class Config implements ConfigInterface
      */
     public function getMixed(string $configKey): mixed
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::MIXED, $configKey));
 
-        $this->validateKeyFound(__FUNCTION__, $valueObject);
-
-        return $valueObject->getValue();
+        return $valueObject->hasKey() ? $valueObject->getValue() : null;
     }
 
     /**
@@ -107,7 +80,7 @@ class Config implements ConfigInterface
      */
     public function getStringOrNull(string $configKey): ?string
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::STRING_OR_NULL, $configKey));
 
         $this->validateType(__FUNCTION__, $valueObject, 'string', false);
 
@@ -122,7 +95,7 @@ class Config implements ConfigInterface
      */
     public function getString(string $configKey): string
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::STRING, $configKey));
 
         $this->validateKeyFound(__FUNCTION__, $valueObject);
         $this->validateType(__FUNCTION__, $valueObject, 'string', true);
@@ -138,7 +111,7 @@ class Config implements ConfigInterface
      */
     public function getIntOrNull(string $configKey): ?int
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::INT_OR_NULL, $configKey));
 
         $this->validateType(__FUNCTION__, $valueObject, 'integer', false);
 
@@ -153,7 +126,7 @@ class Config implements ConfigInterface
      */
     public function getInt(string $configKey): int
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::INT, $configKey));
 
         $this->validateKeyFound(__FUNCTION__, $valueObject);
         $this->validateType(__FUNCTION__, $valueObject, 'integer', true);
@@ -169,7 +142,7 @@ class Config implements ConfigInterface
      */
     public function getBoolOrNull(string $configKey): ?bool
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::BOOL_OR_NULL, $configKey));
 
         $this->validateType(__FUNCTION__, $valueObject, 'boolean', false);
 
@@ -184,7 +157,7 @@ class Config implements ConfigInterface
      */
     public function getBool(string $configKey): bool
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::BOOL, $configKey));
 
         $this->validateKeyFound(__FUNCTION__, $valueObject);
         $this->validateType(__FUNCTION__, $valueObject, 'boolean', true);
@@ -200,7 +173,7 @@ class Config implements ConfigInterface
      */
     public function getTranslatedBoolOrNull(string $configKey): ?bool
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::TRANSLATED_BOOL_OR_NULL, $configKey));
         $value = $valueObject->getValue();
 
         // If key not found or the value is null, return early.
@@ -231,7 +204,7 @@ class Config implements ConfigInterface
      */
     public function getTranslatedBool(string $configKey): bool
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::TRANSLATED_BOOL, $configKey));
         $value = $valueObject->getValue();
 
         $this->validateKeyFound(__FUNCTION__, $valueObject);
@@ -259,7 +232,7 @@ class Config implements ConfigInterface
      */
     public function getDoubleOrNull(string $configKey): ?float
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::DOUBLE_OR_NULL, $configKey));
 
         $this->validateType(__FUNCTION__, $valueObject, 'double', false);
 
@@ -274,7 +247,7 @@ class Config implements ConfigInterface
      */
     public function getDouble(string $configKey): float
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::DOUBLE, $configKey));
 
         $this->validateKeyFound(__FUNCTION__, $valueObject);
         $this->validateType(__FUNCTION__, $valueObject, 'double', true);
@@ -290,7 +263,7 @@ class Config implements ConfigInterface
      */
     public function getArrayOrNull(string $configKey): ?array
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::ARRAY_OR_NULL, $configKey));
 
         $this->validateType(__FUNCTION__, $valueObject, 'array', false);
 
@@ -305,7 +278,7 @@ class Config implements ConfigInterface
      */
     public function getArray(string $configKey): array
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::ARRAY, $configKey));
 
         $this->validateKeyFound(__FUNCTION__, $valueObject);
         $this->validateType(__FUNCTION__, $valueObject, 'array', true);
@@ -321,7 +294,7 @@ class Config implements ConfigInterface
      */
     public function getListOrNull(string $configKey): ?array
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::LIST_OR_NULL, $configKey));
 
         $this->validateType(__FUNCTION__, $valueObject, 'array', false);
         $this->validateArrayIsList(__FUNCTION__, $valueObject, false);
@@ -337,7 +310,7 @@ class Config implements ConfigInterface
      */
     public function getList(string $configKey): array
     {
-        $valueObject = $this->getValueObject($configKey);
+        $valueObject = $this->getValueObject(new Key(KeyType::LIST, $configKey));
 
         $this->validateKeyFound(__FUNCTION__, $valueObject);
         $this->validateType(__FUNCTION__, $valueObject, 'array', true);
@@ -347,6 +320,18 @@ class Config implements ConfigInterface
         assert(is_array($value));
 
         return $value;
+    }
+
+    private function getValueObject(KeyInterface $key): Value
+    {
+        foreach ($this->adapters as $adapter) {
+            $value = $adapter->getValue($key);
+            if ($value->hasKey()) {
+                return $value;
+            }
+        }
+
+        return new Value(null, $key, null);
     }
 
     private function validateKeyFound(string $callerFunctionName, Value $valueObject): void

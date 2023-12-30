@@ -14,6 +14,13 @@ interface KeyInterface
     public function getSection(): string;
 
     /**
+     * Get key type.
+     *
+     * @return KeyType
+     */
+    public function getKeyType(): KeyType;
+
+    /**
      * Get key parts.
      *
      * @param bool $excludeSection

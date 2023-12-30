@@ -7,6 +7,7 @@ namespace Tests\CoRex\Config\Unit\Key;
 use CoRex\Config\Exceptions\KeyException;
 use CoRex\Config\Key\Key;
 use CoRex\Config\Key\KeyInterface;
+use CoRex\Config\Key\KeyType;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,7 +22,7 @@ class KeyTest extends TestCase
         $this->expectException(KeyException::class);
         $this->expectExceptionMessage('Keys must not be empty.');
 
-        new Key('');
+        new Key(KeyType::MIXED, '');
     }
 
     public function testConstructorWhenKeyStartsWithDot(): void
@@ -34,7 +35,7 @@ class KeyTest extends TestCase
             )
         );
 
-        new Key('.key');
+        new Key(KeyType::MIXED, '.key');
     }
 
     public function testConstructorWhenKeyEndsWithDot(): void
@@ -47,7 +48,7 @@ class KeyTest extends TestCase
             )
         );
 
-        new Key('key.');
+        new Key(KeyType::MIXED, 'key.');
     }
 
     public function testConstructorWhenKeyFormatIsValid(): void
@@ -62,7 +63,7 @@ class KeyTest extends TestCase
         foreach ($keys as $key) {
             $this->assertSame(
                 $key,
-                (new Key($key))->getDotNotation()
+                (new Key(KeyType::MIXED, $key))->getDotNotation()
             );
         }
     }
@@ -78,12 +79,20 @@ class KeyTest extends TestCase
             )
         );
 
-        new Key('invalid|key');
+        new Key(KeyType::MIXED, 'invalid|key');
     }
 
     public function testGetSection(): void
     {
         $this->assertSame('bond', $this->key->getSection());
+    }
+
+    public function testGetKeyTypes(): void
+    {
+        foreach (KeyType::cases() as $case) {
+            $key = new Key($case, 'something');
+            $this->assertSame($case, $key->getKeyType());
+        }
     }
 
     public function testGetParts(): void
@@ -122,6 +131,6 @@ class KeyTest extends TestCase
     {
         parent::setUp();
 
-        $this->key = new Key('bond.actor.name');
+        $this->key = new Key(KeyType::MIXED, 'bond.actor.name');
     }
 }

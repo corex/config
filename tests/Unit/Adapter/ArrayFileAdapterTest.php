@@ -7,6 +7,7 @@ namespace Tests\CoRex\Config\Unit\Adapter;
 use CoRex\Config\Adapter\ArrayFileAdapter;
 use CoRex\Config\Filesystem\FilesystemInterface;
 use CoRex\Config\Key\Key;
+use CoRex\Config\Key\KeyType;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -36,7 +37,7 @@ class ArrayFileAdapterTest extends TestCase
             ->with('test/bond.php')
             ->willReturn($data);
 
-        $key = new Key('bond.actor.name');
+        $key = new Key(KeyType::MIXED, 'bond.actor.name');
 
         $adapter = new ArrayFileAdapter($filesystem, 'test');
         $value = $adapter->getValue($key);

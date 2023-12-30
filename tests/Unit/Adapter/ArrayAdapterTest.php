@@ -6,6 +6,7 @@ namespace Tests\CoRex\Config\Unit\Adapter;
 
 use CoRex\Config\Adapter\ArrayAdapter;
 use CoRex\Config\Key\Key;
+use CoRex\Config\Key\KeyType;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,7 +22,7 @@ class ArrayAdapterTest extends TestCase
             ],
         ];
 
-        $key = new Key('actor.name');
+        $key = new Key(KeyType::MIXED, 'actor.name');
 
         $adapter = new ArrayAdapter($data);
         $value = $adapter->getValue($key);

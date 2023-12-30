@@ -6,6 +6,7 @@ namespace Tests\CoRex\Config\Unit\Adapter;
 
 use CoRex\Config\Adapter\ServerAdapter;
 use CoRex\Config\Key\Key;
+use CoRex\Config\Key\KeyType;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -18,7 +19,7 @@ class ServerAdapterTest extends TestCase
         $fullname = 'James Bond';
         $_SERVER['ACTOR_NAME'] = $fullname; // phpcs:ignore
 
-        $key = new Key('actor.name');
+        $key = new Key(KeyType::MIXED, 'actor.name');
 
         $adapter = new ServerAdapter();
         $value = $adapter->getValue($key);
