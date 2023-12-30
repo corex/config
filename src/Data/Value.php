@@ -16,6 +16,10 @@ final class Value
     private array|bool|float|int|string|null $value;
 
     /**
+     * Specify adapter if key is found otherwise null.
+     *
+     * @param AdapterInterface|null $adapter
+     * @param KeyInterface $key
      * @param array<int|string, mixed> $value
      */
     public function __construct(?AdapterInterface $adapter, KeyInterface $key, array|bool|float|int|string|null $value)

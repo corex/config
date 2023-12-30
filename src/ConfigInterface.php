@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace CoRex\Config;
 
+use CoRex\Config\Exceptions\ConfigException;
+use CoRex\Config\Exceptions\TypeException;
+
 interface ConfigInterface
 {
     /**
@@ -27,6 +30,7 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return string|null
+     * @throws TypeException
      */
     public function getStringOrNull(string $configKey): ?string;
 
@@ -35,6 +39,8 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return string
+     * @throws ConfigException
+     * @throws TypeException
      */
     public function getString(string $configKey): string;
 
@@ -43,6 +49,7 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return int|null
+     * @throws TypeException
      */
     public function getIntOrNull(string $configKey): ?int;
 
@@ -51,6 +58,8 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return int
+     * @throws ConfigException
+     * @throws TypeException
      */
     public function getInt(string $configKey): int;
 
@@ -59,6 +68,7 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return bool|null
+     * @throws TypeException
      */
     public function getBoolOrNull(string $configKey): ?bool;
 
@@ -67,6 +77,8 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return bool
+     * @throws ConfigException
+     * @throws TypeException
      */
     public function getBool(string $configKey): bool;
 
@@ -78,6 +90,7 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return bool|null
+     * @throws TypeException
      */
     public function getTranslatedBoolOrNull(string $configKey): ?bool;
 
@@ -89,6 +102,8 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return bool
+     * @throws ConfigException
+     * @throws TypeException
      */
     public function getTranslatedBool(string $configKey): bool;
 
@@ -97,6 +112,7 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return float|null
+     * @throws TypeException
      */
     public function getDoubleOrNull(string $configKey): ?float;
 
@@ -105,6 +121,8 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return float
+     * @throws ConfigException
+     * @throws TypeException
      */
     public function getDouble(string $configKey): float;
 
@@ -113,6 +131,7 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return array<int|string, mixed>|null
+     * @throws TypeException
      */
     public function getArrayOrNull(string $configKey): ?array;
 
@@ -121,6 +140,8 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return array<int|string, mixed>
+     * @throws ConfigException
+     * @throws TypeException
      */
     public function getArray(string $configKey): array;
 
@@ -129,6 +150,7 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return array<int|string, mixed>|null
+     * @throws TypeException
      */
     public function getListOrNull(string $configKey): ?array;
 
@@ -137,6 +159,8 @@ interface ConfigInterface
      *
      * @param string $configKey
      * @return array<int|string, mixed>
+     * @throws ConfigException
+     * @throws TypeException
      */
     public function getList(string $configKey): array;
 }
