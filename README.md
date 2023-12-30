@@ -1,7 +1,7 @@
 # Config Component
 
 ![license](https://img.shields.io/github/license/corex/config?label=license)
-![build](https://github.com/corex/config/workflows/build/badge.svg?branch=master)
+![build](https://github.com/corex/config/workflows/build/badge.svg)
 [![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/corex/d409d31a9138bc37c905b4b4727bebe1/raw/test-coverage__master.json)](https://github.com/corex/config/actions)
 [![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/corex/d409d31a9138bc37c905b4b4727bebe1/raw/phpstan-level__master.json)](https://github.com/corex/config/actions)
 
