@@ -41,7 +41,7 @@ From above example, when getting value, the process is following.
 
 Based on various methods to get values, a null is returned or an exception is thrown.
 
-More methods exists, but in the situation where they does not fit in, instantiate Config::class with your own order of interfaces.
+More methods exists, but in the situation where they does not fit in, instantiate Config::class with your own order of adapters.
 
 
 ## Keys
