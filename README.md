@@ -72,7 +72,9 @@ For all type methods, value from adapters will be checked if they are correct ty
 
 ## Adapters
 
-Following adapters expose arrays as the basis for configuration values.
+It is possible to write your own adapter by extending AbstractAdapter or implementing AdapterInterface.
+
+Following standard adapters expose arrays as the basis for configuration values.
 
 **ArrayAdapter**
 
@@ -130,5 +132,3 @@ Serve php array files in project root from relative directory called "config".
 ```php
 $adapter = new ProjectConfigArrayFileAdapter(new Filesystem());
 ```
-
-> If above adapters are not enough, it is possible to write your own by extending AbstractAdapter or implementing AdapterInterface.
