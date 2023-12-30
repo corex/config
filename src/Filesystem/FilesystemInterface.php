@@ -34,7 +34,7 @@ interface FilesystemInterface
      * Require array from file.
      *
      * @param string $filename
-     * @return array<mixed, mixed>
+     * @return array<int|string, mixed>
      */
     public function requireFileArray(string $filename): array;
 }

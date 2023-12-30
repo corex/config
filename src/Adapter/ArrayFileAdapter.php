@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace CoRex\Config\Adapter;
 
-use CoRex\Config\Filesystem\FilesystemInterface;
 use CoRex\Config\Data\Data;
-use CoRex\Config\Key\KeyInterface;
 use CoRex\Config\Data\Value;
+use CoRex\Config\Filesystem\FilesystemInterface;
+use CoRex\Config\Key\KeyInterface;
 
 /**
  * This adapter handles array files for specified path.
@@ -18,10 +18,8 @@ class ArrayFileAdapter extends AbstractAdapter
 
     private string $pathToArrayFiles;
 
-    /** @var array<int|string, mixed> */
+    /** @var array<int|string, array<int|string, mixed>> */
     private array $data = [];
-
-    private bool $isLoaded = false;
 
     public function __construct(FilesystemInterface $filesystem, string $pathToPhpArrayFiles)
     {
@@ -34,15 +32,19 @@ class ArrayFileAdapter extends AbstractAdapter
      */
     public function getValue(KeyInterface $key): Value
     {
-        $filename = $this->pathToArrayFiles . '/' . $key->getSection() . '.php';
+        $section = $key->getSection();
 
-        $this->data = [];
-        if (!$this->isLoaded && $this->filesystem->fileExists($filename)) {
-            $this->data = $this->filesystem->requireFileArray($filename);
-            $this->isLoaded = true;
+        $filename = $this->pathToArrayFiles . '/' . $section . '.php';
+
+        if (!array_key_exists($section, $this->data)) {
+            $this->data[$section] = [];
         }
 
-        $configValue = Data::getFromArray($this->data, $key->getParts(true));
+        if ($this->filesystem->fileExists($filename)) {
+            $this->data[$section] = $this->filesystem->requireFileArray($filename);
+        }
+
+        $configValue = Data::getFromArray($this->data[$section] ?? [], $key->getParts(true));
 
         return new Value(
             $configValue !== Data::NO_VALUE_FOUND_CODE ? $this : null,
