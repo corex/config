@@ -1,8 +1,9 @@
 # Config Component
 
-![License](https://img.shields.io/packagist/l/corex/config.svg)
-![Build Status](https://travis-ci.org/corex/config.svg?branch=master)
-![codecov](https://codecov.io/gh/corex/config/branch/master/graph/badge.svg)
+![license](https://img.shields.io/github/license/corex/config?label=license)
+![build](https://github.com/corex/config/workflows/build/badge.svg?branch=master)
+[![Code Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/config/d409d31a9138bc37c905b4b4727bebe1/raw/test-coverage__master.json)](https://github.com/corex/config/actions)
+[![PHPStan Level](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/config/d409d31a9138bc37c905b4b4727bebe1/raw/phpstan-level__master.json)](https://github.com/corex/config/actions)
 
 This package has been rewritten from scratch. The purpose was to modernize
 the code and add support for loaders. And at the same time keep it as simple
