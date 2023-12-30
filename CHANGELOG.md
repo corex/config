@@ -7,7 +7,7 @@
 - Rewritten package from scratch to be more strict.
 - Raised php to ^8.1.
 - Support for adapters added in favor of loader.
-- Methods getting configuration values will no longer convert value, but throw an exception if not correct type.
+- Methods getting configuration values will no longer convert value, but throws an exception if incorrect type.
 
 ## Removed
 - Removed support for specifying environment.
