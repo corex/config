@@ -132,3 +132,32 @@ Serve php array files in project root from relative directory called "config".
 ```php
 $adapter = new ProjectConfigArrayFileAdapter(new Filesystem());
 ```
+
+
+### Array files.
+
+Example of an array-file.
+
+Name of file "**bond.php**".
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'actor1' => [
+        'firstname' => 'Roger',
+        'lastname' => 'Moore'
+    ],
+    'actor3' => [
+        'firstname' => 'Daniel',
+        'lastname' => 'Craig'
+    ]
+];
+```
+
+These type of files can be loaded via ArrayFileAdapter, ProjectPathArrayFileAdapter and ProjectConfigArrayFileAdapter.
+
+Example of a config-key: "bond.actor1.firstname" which will return "Roger".
+
+First section of key "bond" indicates the section and on these adapters the filename.
