@@ -22,6 +22,22 @@ $config = new Config([$adapter]);
 $actorName = $config->getString('actor.name');
 ```
 
+A method `section()` is added for convenience when section and rest of key is separated eg. section = "actor" and key = "name".
+
+Example of using section():
+```php
+$adapter = new ArrayAdapter([
+    'actor' => [
+        'name' => 'James Bond',
+    ],
+]);
+
+$config = new Config([$adapter]);
+
+$actorName = $config->section('actor')->getString('name');
+```
+
+
 ## ConfigFactory
 
 A ConfigFactory exists to make it easier to create instances of Config::class.
@@ -52,7 +68,7 @@ Every key must be specified as dot notation e.g. "actor.name".
 
 > When using ServerAdapter and EnvAdapter, the key will be converted to shoutcase e.g. ACTOR_NAME. This makes it easy to override values in e.g. cloud environments.
 
-On key object, multiple methods exists to get key in various formats. Use `custom()` to build your own.
+Key object is passed to adapter and multiple methods exists to get key in various formats. Use `custom()` to build your own.
 
 
 ## Config

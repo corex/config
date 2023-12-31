@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.1.0
+
+### Added
+- Added convenience method "section()" when section is separated from rest of key.
+
 ## 4.0.0
 
 ### Changes

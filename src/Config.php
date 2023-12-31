@@ -13,8 +13,11 @@ use CoRex\Config\Exceptions\TypeException;
 use CoRex\Config\Key\Key;
 use CoRex\Config\Key\KeyInterface;
 use CoRex\Config\Key\KeyType;
+use CoRex\Config\Section\Section;
+use CoRex\Config\Section\SectionBuilderInterface;
+use CoRex\Config\Section\SectionInterface;
 
-class Config implements ConfigInterface
+class Config implements ConfigInterface, SectionBuilderInterface
 {
     /** @var array<AdapterInterface> */
     private array $adapters = [];
@@ -320,6 +323,14 @@ class Config implements ConfigInterface
         assert(is_array($value));
 
         return $value;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function section(string $section): SectionInterface
+    {
+        return new Section($this, $section);
     }
 
     private function getValueObject(KeyInterface $key): Value

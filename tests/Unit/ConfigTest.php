@@ -15,6 +15,8 @@ use CoRex\Config\Exceptions\AdapterException;
 use CoRex\Config\Exceptions\ConfigException;
 use CoRex\Config\Exceptions\TypeException;
 use CoRex\Config\Key\KeyInterface;
+use CoRex\Config\Section\SectionBuilderInterface;
+use CoRex\Config\Section\SectionInterface;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -24,12 +26,11 @@ use stdClass;
 class ConfigTest extends TestCase
 {
     /** @var array<string, array<string, array<int|string, int|string>|bool|float|int|string|null>> */
-
-// array<string, array<string, array<int|string, int|string>|bool|float|int|string|null>>>
-
     private array $data = [];
 
     private AdapterInterface $adapter;
+
+    /** @var ConfigInterface&SectionBuilderInterface */
     private ConfigInterface $config;
 
     public function testConstructorWhenNoAdapters(): void
@@ -723,6 +724,15 @@ class ConfigTest extends TestCase
         );
 
         $this->config->getList('unknown.key');
+    }
+
+    public function testSection(): void
+    {
+        /** @var SectionInterface $section */
+        $section = $this->config->section('test');
+
+        $this->assertSame('test', $section->getSection());
+        $this->assertInstanceOf(SectionInterface::class, $section);
     }
 
     protected function setUp(): void
