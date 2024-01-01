@@ -15,7 +15,6 @@ use CoRex\Config\Exceptions\AdapterException;
 use CoRex\Config\Exceptions\ConfigException;
 use CoRex\Config\Exceptions\TypeException;
 use CoRex\Config\Key\KeyInterface;
-use CoRex\Config\Section\SectionBuilderInterface;
 use CoRex\Config\Section\SectionInterface;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -30,7 +29,6 @@ class ConfigTest extends TestCase
 
     private AdapterInterface $adapter;
 
-    /** @var ConfigInterface&SectionBuilderInterface */
     private ConfigInterface $config;
 
     public function testConstructorWhenNoAdapters(): void

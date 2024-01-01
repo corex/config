@@ -14,10 +14,9 @@ use CoRex\Config\Key\Key;
 use CoRex\Config\Key\KeyInterface;
 use CoRex\Config\Key\KeyType;
 use CoRex\Config\Section\Section;
-use CoRex\Config\Section\SectionBuilderInterface;
 use CoRex\Config\Section\SectionInterface;
 
-class Config implements ConfigInterface, SectionBuilderInterface
+class Config implements ConfigInterface
 {
     /** @var array<AdapterInterface> */
     private array $adapters = [];

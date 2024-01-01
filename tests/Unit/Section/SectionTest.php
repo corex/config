@@ -6,7 +6,6 @@ namespace Tests\CoRex\Config\Unit\Section;
 
 use CoRex\Config\ConfigInterface;
 use CoRex\Config\Section\Section;
-use CoRex\Config\Section\SectionBuilderInterface;
 use CoRex\Config\Section\SectionInterface;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -14,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class SectionTest extends TestCase
 {
-    /** @var ConfigInterface&SectionBuilderInterface&MockObject */
+    /** @var ConfigInterface&MockObject */
     private ConfigInterface $config;
 
     private SectionInterface $section;
@@ -191,7 +190,7 @@ class SectionTest extends TestCase
     {
         parent::setUp();
 
-        /** @var ConfigInterface&SectionBuilderInterface&MockObject $config */
+        /** @var ConfigInterface&MockObject $config */
         $config = $this->createMock(ConfigInterface::class);
 
         $this->config = $config;

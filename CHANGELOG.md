@@ -1,9 +1,19 @@
 # Changelog
 
+## 4.1.1
+
+### Fixed
+- Fixed wrong interface/missing methods on interface.
+
 ## 4.1.0
 
 ### Added
 - Added convenience method "section()" when section is separated from rest of key.
+
+## 4.0.2
+
+### Fixed
+- Fixed load of multiple array files.
 
 ## 4.0.0
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace CoRex\Config\Section;
 
-use CoRex\Config\ConfigInterface;
+use CoRex\Config\Data\ValueGetInterface;
 
-interface SectionInterface extends ConfigInterface
+interface SectionInterface extends ValueGetInterface
 {
     /**
      * Get section.
