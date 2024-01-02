@@ -22,6 +22,8 @@ $config = new Config([$adapter]);
 $actorName = $config->getString('actor.name');
 ```
 
+---
+
 A method `section()` is added for convenience when section and rest of key is separated eg. section = "actor" and key = "name".
 
 Example of using section():
@@ -35,6 +37,36 @@ $adapter = new ArrayAdapter([
 $config = new Config([$adapter]);
 
 $actorName = $config->section('actor')->getString('name');
+```
+
+---
+
+A method `getConfigClassObject()` is added for getting array and pass to config-class on constructor.
+
+Example of using getConfigClassObject():
+```php
+class MyConfigClass implements ConfigClassInterface
+{
+    public function __construct(array $data)
+    {
+    }
+
+    public static function getSection(): string
+    {
+        return 'actor';
+    }
+}
+
+$adapter = new ArrayAdapter([
+    'actor' => [
+        'name' => 'James Bond',
+    ],
+]);
+
+$config = new Config([$adapter]);
+
+/** @var MyConfigClass $actorConfig */
+$myConfigClass = $config->getConfigClassObject(MyConfigClass::class);
 ```
 
 

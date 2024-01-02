@@ -16,4 +16,14 @@ interface ConfigInterface extends ValueGetInterface
      * @return SectionInterface
      */
     public function section(string $section): SectionInterface;
+
+    /**
+     * Get array and pass on config class constructor.
+     *
+     * Note: a config class must implement ConfigClassInterface.
+     *
+     * @param string $configClass
+     * @return ConfigClassInterface
+     */
+    public function getConfigClassObject(string $configClass): ConfigClassInterface;
 }

@@ -332,6 +332,43 @@ class Config implements ConfigInterface
         return new Section($this, $section);
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function getConfigClassObject(string $configClass): ConfigClassInterface
+    {
+        if (!class_exists($configClass)) {
+            throw new ConfigException(
+                sprintf(
+                    'Class "%s" not found.',
+                    $configClass
+                )
+            );
+        }
+
+        if (!in_array(ConfigClassInterface::class, class_implements($configClass), true)) {
+            throw new ConfigException(
+                sprintf(
+                    'Config class "%s" does not implement %s.',
+                    $configClass,
+                    ConfigClassInterface::class
+                )
+            );
+        }
+
+        /** @var string $section */
+        $section = $configClass::getSection();
+//        $section = call_user_func([$configClass, 'getSection']);
+
+        /** @var array<int|string, mixed> $data */
+        $data = $this->getArray($section);
+
+        /** @var ConfigClassInterface $configClassObject */
+        $configClassObject = new $configClass($data);
+
+        return $configClassObject;
+    }
+
     private function getValueObject(KeyInterface $key): Value
     {
         foreach ($this->adapters as $adapter) {

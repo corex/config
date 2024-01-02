@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.2.0
+
+### Added
+- Added method getConfigClassObject() to get array and pass on config class constructor.
+
 ## 4.1.2
 
 ### Fixed

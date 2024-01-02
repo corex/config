@@ -8,6 +8,7 @@ use CoRex\Config\Adapter\AbstractAdapter;
 use CoRex\Config\Adapter\AdapterInterface;
 use CoRex\Config\Adapter\ArrayAdapter;
 use CoRex\Config\Config;
+use CoRex\Config\ConfigClassInterface;
 use CoRex\Config\ConfigInterface;
 use CoRex\Config\Data\TrueFalse;
 use CoRex\Config\Data\Value;
@@ -18,6 +19,7 @@ use CoRex\Config\Key\KeyInterface;
 use CoRex\Config\Section\SectionInterface;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use Tests\CoRex\Config\Resource\BondConfigClass;
 
 /**
  * @covers \CoRex\Config\Config
@@ -726,11 +728,49 @@ class ConfigTest extends TestCase
 
     public function testSection(): void
     {
-        /** @var SectionInterface $section */
         $section = $this->config->section('test');
 
         $this->assertSame('test', $section->getSection());
         $this->assertInstanceOf(SectionInterface::class, $section);
+    }
+
+    public function testGetConfigClassObjectWorks(): void
+    {
+        /** @var BondConfigClass $bondConfigClass */
+        $bondConfigClass = $this->config->getConfigClassObject(BondConfigClass::class);
+
+        $this->assertSame('Sean', $bondConfigClass->getFirstname());
+        $this->assertSame('Connery', $bondConfigClass->getLastname());
+    }
+
+    public function testGetConfigClassObjectWhenClassNotFound(): void
+    {
+        $this->expectException(ConfigException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Class "%s" not found.',
+                'unknown-class'
+            )
+        );
+
+        $this->config->getConfigClassObject('unknown-class');
+    }
+
+    public function testGetConfigClassObjectWhenClassNotImplementing(): void
+    {
+        $class = new class {
+        };
+
+        $this->expectException(ConfigException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Config class "%s" does not implement %s.',
+                get_class($class),
+                ConfigClassInterface::class
+            )
+        );
+
+        $this->config->getConfigClassObject(get_class($class));
     }
 
     protected function setUp(): void
