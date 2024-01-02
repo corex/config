@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.1.2
+
+### Fixed
+- Added github folder to git attributes.
+
 ## 4.1.1
 
 ### Fixed
